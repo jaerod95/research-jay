@@ -1,6 +1,8 @@
 var keystroke_gather = {
   keystrokeCount: 0,  //The keystroke Count of the current Session
+
   loginData: {},  //The name and username used during login
+
   data: {
     "Id": null, //a unique identifier for the data collected ex timestamp-name-login base64 encoded
     "StartingEventType": 'focusin', //what triggered the program to start recording eg. focusin
@@ -15,6 +17,7 @@ var keystroke_gather = {
       //      "EventType": evt.type
     ],
   },
+
   DataString: "",
   init: function() {
     console.log('This is where I will put an intro text to the document')
@@ -35,6 +38,7 @@ var keystroke_gather = {
       }
     };
   },
+
   login: function() {
     //Gather data of Name and username;
     var keystroke_login_name = document.getElementById('keystroke_name').value;
@@ -52,6 +56,7 @@ var keystroke_gather = {
     keystroke_gather.createSession();
 
   },
+
   createSession: function() {
     keystroke_gather.data.Id = Date.now() + '-' + btoa(keystroke_gather.loginData.keystroke_login_name) + '-' + btoa(keystroke_gather.loginData.keystroke_login_username);
 
@@ -72,15 +77,18 @@ var keystroke_gather = {
 
     keystroke_gather.runAnalysis();
   },
+
   runAnalysis: function() {
     document.addEventListener('keydown', keystroke_gather.key);
     document.addEventListener('keyup', keystroke_gather.key);
   },
+
   key: function(evt) {
     if(keystroke_gather.keystrokeCount >= 2000) {
       keystroke_gather.keystrokeCount = 0;
       keystroke_gather.uploadData();
     }
+
     //we can get the timestamp from the event or from a date.now() function. Date.now could also be used to measure differences by what time they are typing.
     //console.log(evt);
     var showPanel = document.getElementById('currentKey');
@@ -90,6 +98,8 @@ var keystroke_gather = {
       "Timestamp": Date.now(),
       "EventType": evt.type
     };
+
+
     keystroke_gather.data.KeyEvents.push(keystroke_obj)
     keystroke_gather.DataString += `{
       ` + evt.keyCode + `,
@@ -98,23 +108,25 @@ var keystroke_gather = {
       ` + evt.type + `
     }
     `;
+
+
     if (evt.type == 'keydown') {
       keystroke_gather.keystrokeCount++;
       showPanel.innerHTML = evt.key;
     }
   },
+
   uploadData: function() {
+
     keystroke_gather.data.EndTimestamp = Date.now();
     keystroke_gather.DataString += `
   ],
   EndTimestamp:` + Date.now() + `
 }`;
 
-
     console.log('start time' + Date.now());
     console.log(keystroke_gather.DataString);
     console.log('end time' + Date.now());
-    console.log('Insert data Upload Here');
   }
 }
 
