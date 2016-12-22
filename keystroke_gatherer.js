@@ -13,10 +13,13 @@ var keystroke_gather = {
       //      "Target": evt.target.name,
       //      "Timestamp": Date.now(),
       //      "EventType": evt.type
-    ]
+    ],
   },
+  DataString: "",
   init: function() {
     console.log('This is where I will put an intro text to the document')
+
+    //Create the login HTML
     var loginDiv = document.createElement('div');
     loginDiv.id = "keystroke_gather_login";
     loginDiv.style = `width: 100%; height: 25px; display: flex; justify-content: space-between;`;
@@ -25,6 +28,7 @@ var keystroke_gather = {
               <input type="submit" name="keystoke_login" id="keystroke_gather_login_submit" onclick="keystroke_gather.login()">`;
     document.body.prepend(loginDiv);
 
+    //Just to speed up the login process, login on 'enter'
     document.getElementById('keystroke_gather_login').onkeydown = function(e) {
       if (e.keyCode == 13) {
         keystroke_gather.login();
@@ -51,10 +55,21 @@ var keystroke_gather = {
   createSession: function() {
     keystroke_gather.data.Id = Date.now() + '-' + btoa(keystroke_gather.loginData.keystroke_login_name) + '-' + btoa(keystroke_gather.loginData.keystroke_login_username);
 
+    keystroke_gather.DataString += `{
+      id:` + Date.now() + `-` + btoa(keystroke_gather.loginData.keystroke_login_name) + `-` + btoa(keystroke_gather.loginData.keystroke_login_username) + `,
+      StartingEventType:focusin,
+      EndingEventType:focusout,
+      StartTimestamp:` + Date.now() + `,
+      Target:` + window.location.href + `,
+      KeyEvents:[
+        `;
+
+    //sets StartTimestamp
     keystroke_gather.data.StartTimestamp = Date.now();
+
+    //sets the window targets
     keystroke_gather.data.target = window.location.href;
 
-    console.log(keystroke_gather);
     keystroke_gather.runAnalysis();
   },
   runAnalysis: function() {
@@ -76,7 +91,13 @@ var keystroke_gather = {
       "EventType": evt.type
     };
     keystroke_gather.data.KeyEvents.push(keystroke_obj)
-
+    keystroke_gather.DataString += `{
+      ` + evt.keyCode + `,
+      ` + evt.target.name + `,
+      ` + Date.now() + `,
+      ` + evt.type + `
+    }
+    `;
     if (evt.type == 'keydown') {
       keystroke_gather.keystrokeCount++;
       showPanel.innerHTML = evt.key;
@@ -84,8 +105,16 @@ var keystroke_gather = {
   },
   uploadData: function() {
     keystroke_gather.data.EndTimestamp = Date.now();
-    console.log(JSON.stringify(keystroke_gather.data.keyEvents));
-    console.log('Insert data Upload Here')
+    keystroke_gather.DataString += `
+  ],
+  EndTimestamp:` + Date.now() + `
+}`;
+
+
+    console.log('start time' + Date.now());
+    console.log(keystroke_gather.DataString);
+    console.log('end time' + Date.now());
+    console.log('Insert data Upload Here');
   }
 }
 
