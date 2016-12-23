@@ -38,6 +38,13 @@ var jr_key = {
     var tarLoc = window.location.href;
 
     jr_key.w.postMessage(['createSession',{keystroke_login_name,keystroke_login_username,tarLoc}]);
+  },
+
+
+  
+  u: function(evt) {
+    if (evt === 'keyCount')
+      jr_key.w.postMessage(['u','keyCount']);
   }
 }
 document.addEventListener('DOMContentLoaded', jr_key.init);

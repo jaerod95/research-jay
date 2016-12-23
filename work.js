@@ -18,17 +18,15 @@ var jr_key = {
   },
   uploadData: function() {
     console.log('upload Started');
-    console.log(JSON.stringify(jr_key.data));
+    var j = JSON.stringify(jr_key.data);
+    console.log(j);
     console.log('upload Ended');
+    console.log(j.length);
   }
 }
 
 self.addEventListener('message', function(e) {
   switch(e.data[0]) {
-    case 'init':
-    break;
-    case 'login':
-    break;
     case 'createSession':
     //Creates the session ID == Date-(loginName-username)b64 Encoded
     jr_key.data.Id = Date.now() + '-' + btoa(e.data[1][0]) + '-' + btoa(e.data[1][1]);
@@ -36,8 +34,6 @@ self.addEventListener('message', function(e) {
     jr_key.data.Target = e.data[1][2];
 
     self.postMessage(['runAnalysis']);
-    break;
-    case 'runAnalysis':
     break;
     case 'key':
     if(jr_key.keystrokeCount >= 2000) {
@@ -57,7 +53,9 @@ self.addEventListener('message', function(e) {
       jr_key.keystrokeCount++;
     }
     break;
-    case 'uploadData':
+    case 'u':
+    if (e.data[1] == 'keyCount')
+      console.log(jr_key.keystrokeCount);
     break;
   }
 }, false);
