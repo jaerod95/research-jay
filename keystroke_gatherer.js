@@ -8,7 +8,6 @@ var keystroke_gather = {
     "StartingEventType": 'focusin', //what triggered the program to start recording eg. focusin
     "EndingEventType": 'focusout', //what triggered the program to stop recording eg. focusout
     "StartTimestamp": null,
-    "EndTimestamp": null,
     "Target": null, //The name of the person who is giving this info?
     "KeyEvents": [ //The collection of every keystroke gathered
       //      "KeyCode": evt.keyCode,
@@ -16,9 +15,11 @@ var keystroke_gather = {
       //      "Timestamp": Date.now(),
       //      "EventType": evt.type
     ],
+    "EndTimestamp": null
   },
 
   DataString: "",
+
   init: function() {
     console.log('This is where I will put an intro text to the document')
 
@@ -37,7 +38,7 @@ var keystroke_gather = {
         keystroke_gather.login();
       }
     };
-  },
+  },//DONE
 
   login: function() {
     //Gather data of Name and username;
@@ -55,13 +56,15 @@ var keystroke_gather = {
     //create Initial Session;
     keystroke_gather.createSession();
 
-  },
+  },//DONE
 
   createSession: function() {
+    //Creates the session ID == Date-(loginName-username)b64 Encoded
     keystroke_gather.data.Id = Date.now() + '-' + btoa(keystroke_gather.loginData.keystroke_login_name) + '-' + btoa(keystroke_gather.loginData.keystroke_login_username);
 
+    //Gets the string equivalent
     keystroke_gather.DataString += `{
-      id:` + Date.now() + `-` + btoa(keystroke_gather.loginData.keystroke_login_name) + `-` + btoa(keystroke_gather.loginData.keystroke_login_username) + `,
+      Id:` + Date.now() + `-` + btoa(keystroke_gather.loginData.keystroke_login_name) + `-` + btoa(keystroke_gather.loginData.keystroke_login_username) + `,
       StartingEventType:focusin,
       EndingEventType:focusout,
       StartTimestamp:` + Date.now() + `,
@@ -73,7 +76,7 @@ var keystroke_gather = {
     keystroke_gather.data.StartTimestamp = Date.now();
 
     //sets the window targets
-    keystroke_gather.data.target = window.location.href;
+    keystroke_gather.data.Target = window.location.href;
 
     keystroke_gather.runAnalysis();
   },
@@ -81,7 +84,7 @@ var keystroke_gather = {
   runAnalysis: function() {
     document.addEventListener('keydown', keystroke_gather.key);
     document.addEventListener('keyup', keystroke_gather.key);
-  },
+  },//DONE
 
   key: function(evt) {
     if(keystroke_gather.keystrokeCount >= 2000) {
@@ -92,6 +95,8 @@ var keystroke_gather = {
     //we can get the timestamp from the event or from a date.now() function. Date.now could also be used to measure differences by what time they are typing.
     //console.log(evt);
     var showPanel = document.getElementById('currentKey');
+
+    console.log(evt.keyCode)
     var keystroke_obj = {
       "KeyCode": evt.keyCode,
       "Target": evt.target.name,
@@ -127,6 +132,7 @@ var keystroke_gather = {
     console.log('start time' + Date.now());
     console.log(keystroke_gather.DataString);
     console.log('end time' + Date.now());
+    console.log(JSON.stringify(keystroke_gather.data).length)
   }
 }
 
