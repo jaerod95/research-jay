@@ -1,6 +1,8 @@
 var jr_key = {
 
-  w: new Worker('work.js'),
+  count: 0,
+
+  w: new Worker('C:/Users/Jason%20Rodriguez/Documents/8_WORK/2_RESEARCH_JAY/research-jay/work.js'),
 
   init: function() {
 
@@ -17,6 +19,8 @@ var jr_key = {
       switch(e.data[0]) {
         case 'runAnalysis':
         document.addEventListener('keydown', function(evt) {
+          jr_key.count++;
+          document.getElementById('currentKeyCount').innerHTML = jr_key.count;
           jr_key.w.postMessage(['key',evt.keyCode, evt.target.name,Date.now(),evt.type])
         });
         document.addEventListener('keyup', function(evt) {
@@ -41,7 +45,7 @@ var jr_key = {
   },
 
 
-  
+
   u: function(evt) {
     if (evt === 'keyCount')
       jr_key.w.postMessage(['u','keyCount']);

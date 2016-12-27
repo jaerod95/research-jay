@@ -17,11 +17,20 @@ var jr_key = {
     "EndTimestamp": null
   },
   uploadData: function() {
+    jr_key.EndTimestamp = Date.now();
     console.log('upload Started');
     var j = JSON.stringify(jr_key.data);
     console.log(j);
-    console.log('upload Ended');
-    console.log(j.length);
+    var reader = new FileReader();
+
+    // Loads the HTML Page content into a reader
+    reader.readAsText(data.txt);
+    reader.onload = function() {
+        var str = reader.result
+        console.log(str);
+        console.log('upload Ended');
+    }
+
   }
 }
 

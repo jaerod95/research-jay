@@ -3,28 +3,44 @@
     <title>Keystroke Gatherer Test</title>
     </head>
   <body>
-<div id="currentKey" class="currentKey">
-
+<div id="currentKeyCount" class="currentKeyCount">
+  0
 </div>
 <form class="" action="index.html" method="post">
-  <input type="text" name="firstOne" value="1">
-  <input type="text" name="SecondOne" value="2">
-  <input type="text" name="thirdOne" value="3">
+  If you could send a message to the entire world, what would you say in 30 seconds?
+  <input type="text" name="question_one" value=""><br>
+If you received enough money to never need to work again, what would you spend your time doing?
+<input type="text" name="question_two" value=""><br>
+If today was the last day of your life, what would you want to do?
+<input type="text" name="question_three" value=""><br>
+What would you change about your life if you knew you would never die?
+<input type="text" name="question_four" value=""><br>
+If your entire life was a movie, what title would best fit?
+  <input type="text" name="question_five" value=""><br>
 </form>
   </body>
  </html>
  <script src="keystroke.js" charset="utf-8"></script>
 <style media="screen">
-  .currentKey {
-    width: 500px;
-    height: 500px;
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    margin: -250px 0px 0px -250px;
-    background-color: #ddd;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 5em;
-  }
+form {
+  width: 50%;
+  margin: auto;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  background: #ccc;
+  padding: 20px;
+}
+form input {
+  height: 40px;
+  padding: 10px;
+}
+.currentKeyCount {
+  float: right;
+  width 15px;
+  height: 15px;
+  background: #ccc;
+}
+
 </style>
