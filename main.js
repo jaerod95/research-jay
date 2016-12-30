@@ -28,7 +28,7 @@ app.on('ready', () => {
   win = new BrowserWindow({
     width: width * .25,
     width: height,
-    x: width * .5,
+    x: width * .4,
     y: 0,
     show: false,
     backgroundColor: '#21252b'

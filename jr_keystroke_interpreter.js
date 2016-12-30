@@ -1,72 +1,208 @@
-var jr_k = {
-  data: "",
-  json_obj: {},
-  dwell_time: {},
+//////////////////////////////////////////////////////////////
+//                                                          //
+//  TODO:                                                   //
+// 1. Need to write test cases                              //
+// 2. Need to check about not alpha numeric characters      //
+// 3. Need to finish N-graphs                               //
+// 4. Need to talk to Jay about storind the data somewhere. //
+// 5. Make the data input section look good.                //
+// 6. Make everything look good for that.                   //
+//////////////////////////////////////////////////////////////
+
+
+/******************************************************************
+ * Main variable to contail all funcitons out of the global scope *
+ * @type {Object}                                                 *
+ ******************************************************************/
+var jr_keystroke_analyzer = {
+  data              : "",
+  data_in_json      : {},
+  orderedEvents     : [],
+  dwell_time        : {},
+  flight_time_one   : {},
+
+/*********************************************************************
+ * Default Constructer ran at on file upload (Testing Purposes only) *
+ * @param  {input} evt  The file input DOMElement                    *
+ * @return {void}       void;                                        *
+ *********************************************************************/
   init: function(evt) {
-    //this is just for testing purposes
-    var reader = new FileReader();
-    var f = evt.target.files
+    var reader  = new FileReader();
+    var f       = evt.target.files;
+
     reader.readAsText(f[0]);
+
     reader.onload = function() {
-      jr_k.data = reader.result;
-      jr_k.parse(jr_k.data);
+      jr_keystroke_analyzer.data = reader.result;
+      jr_keystroke_analyzer.parse(jr_keystroke_analyzer.data);
     }
   },
+  /**
+   * All Analysis Start Here, Calculates:
+   *  Dwell Time,
+   *  Flight Time,
+   *  N-Graph
+   * @param  {String} str Data in String Format
+   * @return {void}       void;
+   */
   parse: function(str) {
-    jr_k.json_obj = JSON.parse(str);
-    jr_k.dwell_time = jr_k.calculateDwellTime(jr_k.json_obj.KeyEvents);
-    console.log(ConvertToCSV(jr_k.dwell_time))
+    jr_keystroke_analyzer.data_in_json  = JSON.parse(str);
 
-    function ConvertToCSV(obj) {
-      var csv = {
-        data: []
-      };
-      for (var prop in obj) {
-        if (!obj.hasOwnProperty(prop)) {
-          continue;
-        }
-        for (var i = 0; i < obj[prop].length; i++) {
-          var temp = {};
-          var bool = false;
-          for (var k = 0; k < csv.data.length; k++) {
-            if (csv.data[k].hasOwnProperty(prop)) {} else {
-              temp[prop] = obj[prop][i];
-              csv.data[k][prop] = obj[prop][i];
-              bool = true;
-              break;
-            }
-          }
-          if (!bool) {
-            temp[prop] = obj[prop][i];
-            csv.data.push(temp);
-          }
-        }
-      }
-      console.log(JSON.stringify(csv));
-      return csv;
-    }
+    jr_keystroke_analyzer.dwell_time    = jr_keystroke_analyzer.calculateDwellTime(jr_keystroke_analyzer.data_in_json.KeyEvents);
+    console.log(jr_keystroke_analyzer.ConvertToCSV(jr_keystroke_analyzer.dwell_time));
+
+    jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data_in_json.KeyEvents);
+    console.log(jr_keystroke_analyzer.orderedEvents);
+
+    //jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.data_in_json.KeyEvents);
+    //console.log(jr_keystroke_analyzer.flight_time)
+    //jr_keystroke_analyzer.n_graph = jr_keystroke_analyzer.calculateNGraph(jr_keystroke_analyzer.orderedEvents);
   },
-  calculateDwellTime: function(data) {
-    var result = {}
-    var str = '{'
 
-    //8,9,10,14,15,27,32-127
+  /*****************************************************************************
+   * Orders every keystroke Press and Release pair by Timestamp of Press       *
+   * @param  {JSON} data Key Events of data                                    *
+   * @return {array}     An array of JSON Objects sorted by Timestamp of Press *
+   *                     [Format]   : {                                        *
+   *                     Press      : Timestamp(numeric),                      *
+   *                     Release    : Timestamp(numeric),                      *
+   *                     allData    : [{                                       *
+   *                                    EventType: ex.("keydown"),             *
+   *                                    Key: ex.("T"),                         *
+   *                                    KeyCode: ex.(84),                      *
+   *                                    Target: ex.("question_one"),           *
+   *                                    Timestamp: ex.(1483093174757)          *
+   *                                   },                                      *
+   *                                   {                                       *
+   *                                    EventType: ex.("keyup"),               *
+   *                                    Key: ex.("T"),                         *
+   *                                    KeyCode: ex.(84),                      *
+   *                                    Target: ex.("question_one"),           *
+   *                                    Timestamp: ex.(1483093174869)          *
+   *                                   }]                                      *
+   *                                                                           *
+   *     //8,9,10,14,15,27,32-127  POSSIBLE TO TRACK KEYS                      *
+   ****************************************************************************/
+  orderKeyEvents: function(data) {
+    var result  = {};
+    var str     = '{';
 
     for (var i = 0; i < data.length; i++) {
-      //if (String.fromCharCode(i) != '')
-      //str += '"_' + i + '": [],';
       str += '"' + data[i].Key + '": [],';
     }
 
-    str = str.slice(0, -1);
-    str += '}';
-    result = JSON.parse(str);
-
+    str         = str.slice(0, -1);
+    str         += '}';
+    result      = JSON.parse(str);
 
     var keyTemp = [];
-    var temp = [];
+    var temp    = [];
+
+    for (var k  = data.length - 1; k >= 0; k--) {
+      var index = keyTemp.indexOf(data[k].KeyCode);
+
+      if (index != -1) {
+        var dwelltime   = temp[index].Timestamp - data[k].Timestamp;
+        var PressValues = [
+                            {
+                              "Press": data[k].Timestamp,
+                              "Release": temp[index].Timestamp,
+                              "allData": [data[k], data[index]]
+                            }
+                          ];
+
+        result[data[k].Key].push(PressValues)
+        temp.splice(index, 1);
+        keyTemp.splice(index, 1);
+      } else {
+        keyTemp.push(data[k].KeyCode);
+        temp.push(data[k]);
+      }
+    }
+    var toSort  = [];
+    for (var value in result) {
+      if (!result.hasOwnProperty(value)) {
+        continue;
+      }
+      for (var j = 0; j < result[value].length; j++) {
+        toSort.push(result[value][j][0]);
+      }
+    }
+    jr_keystroke_analyzer.sortByKey(toSort,'Press');
+    result = toSort;
+    return result;
+  },
+
+  /**********************************************************
+   * Sorts an array of JSON objects by property value       *
+   * @param  {array} array An Array of JSON Objects         *
+   * @param  {String} key  The property you want to sort by *
+   * @return {array}       The sorted Array                 *
+   **********************************************************/
+  sortByKey: function(array, key) {
+  return array.sort(function(a, b) {
+      var x = a[key]; var y = b[key];
+      return ((x < y) ? -1: ((x > y) ? 1 : 0));
+ });
+},
+
+/**********************************************************
+ * Converts JSON Object into CSV Format (dwelltime)       *
+ * @param {JSON} obj JSON object to convert to CSV format *
+ **********************************************************/
+
+  ConvertToCSV: function(obj) {
+    var csv = {
+      data: []
+    };
+    for (var prop in obj) {
+      if (!obj.hasOwnProperty(prop)) {
+        continue;
+      }
+      for (var i = 0; i < obj[prop].length; i++) {
+        var temp = {};
+        var bool = false;
+        for (var k = 0; k < csv.data.length; k++) {
+          if (csv.data[k].hasOwnProperty(prop)) {} else {
+            temp[prop] = obj[prop][i];
+            csv.data[k][prop] = obj[prop][i];
+            bool = true;
+            break;
+          }
+        }
+        if (!bool) {
+          temp[prop] = obj[prop][i];
+          csv.data.push(temp);
+        }
+      }
+    }
+    console.log(JSON.stringify(csv));
+    return csv;
+  },
+
+  /********************************************************
+   * Calculates the DwellTime by Key                      *
+   * @param  {JSON} data KeyEvents of data                *
+   * @return {JSON}      JSON object of DwellTime per Key *
+   ********************************************************/
+  calculateDwellTime: function(data) {
+    var result = {}
+    var str    = '{'
+
+    for (var i = 0; i < data.length; i++) {
+      str += '"' + data[i].Key + '": [],';
+    }
+
+    str         = str.slice(0, -1);
+    str         += '}';
+    result      = JSON.parse(str);
+
+    var keyTemp = [];
+    var temp    = [];
+
     for (var k = data.length - 1; k >= 0; k--) {
       var index = keyTemp.indexOf(data[k].KeyCode);
+
       if (index != -1) {
         var dwelltime = temp[index].Timestamp - data[k].Timestamp;
         result[data[k].Key].push(dwelltime)
@@ -78,7 +214,36 @@ var jr_k = {
       }
     }
     return result;
+  },
+
+
+  calculateFlightTimeOne: function(obj) {
+    // FTtype1,n=Pn+1−Rn,
+    console.log('calculate flight time here')
+  },
+
+
+  calculateFlightTimeTwo: function(obj) {
+    // FTtype2,n=Rn+1−Rn,
+    console.log('calculate flight time here')
+  },
+
+
+  calculateFlightTimeThree: function(obj) {
+    // FTtype3,n=Pn+1−Pn,
+    console.log('calculate flight time here')
+  },
+
+
+  calculateFlightTimeFour: function(obj) {
+    // FTtype4,n=Rn+1−Pn,
+    console.log('calculate flight time here')
+  },
+
+
+  calculateNGraph: function(obj) {
+    console.log('calculate n-graph here')
   }
 }
 
-document.getElementById('jr_file').addEventListener('change', jr_k.init);
+document.getElementById('jr_file').addEventListener('change', jr_keystroke_analyzer.init);
