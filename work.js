@@ -13,6 +13,7 @@ var jr_key = {
       //      "Target": evt.target.name,
       //      "Timestamp": Date.now(),
       //      "EventType": evt.type
+      //      "Key": evt.key
     ],
     "EndTimestamp": null
   },
@@ -47,7 +48,8 @@ self.addEventListener('message', function(e) {
       "KeyCode": e.data[1],
       "Target": e.data[2],
       "Timestamp": e.data[3],
-      "EventType": e.data[4]
+      "EventType": e.data[4],
+      "Key": e.data[5]
     };
 
     jr_key.data.KeyEvents.push(keystroke_obj)

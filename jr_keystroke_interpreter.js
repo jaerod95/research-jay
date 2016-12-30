@@ -23,37 +23,24 @@ var jr_k = {
       };
       for (var prop in obj) {
         if (!obj.hasOwnProperty(prop)) {
-          //The current property is not a direct property of p
           continue;
         }
-
-        //prop is the property of the currently being recorded prop
-        //obj is the whole object
-
         for (var i = 0; i < obj[prop].length; i++) {
           var temp = {};
           var bool = false;
-
-
           for (var k = 0; k < csv.data.length; k++) {
-            if (csv.data[k].hasOwnProperty(prop)) {
-            }
-            else {
+            if (csv.data[k].hasOwnProperty(prop)) {} else {
               temp[prop] = obj[prop][i];
               csv.data[k][prop] = obj[prop][i];
               bool = true;
               break;
             }
-            //put stuff here
           }
-
-
           if (!bool) {
-          temp[prop] = obj[prop][i];
-          csv.data.push(temp);
+            temp[prop] = obj[prop][i];
+            csv.data.push(temp);
+          }
         }
-        }
-        //Do your logic with the property here
       }
       console.log(JSON.stringify(csv));
       return csv;
@@ -65,9 +52,10 @@ var jr_k = {
 
     //8,9,10,14,15,27,32-127
 
-    for (var i = 0; i < 256; i++) {
+    for (var i = 0; i < data.length; i++) {
       //if (String.fromCharCode(i) != '')
-      str += '"_' + i + '": [],';
+      //str += '"_' + i + '": [],';
+      str += '"' + data[i].Key + '": [],';
     }
 
     str = str.slice(0, -1);
@@ -81,7 +69,7 @@ var jr_k = {
       var index = keyTemp.indexOf(data[k].KeyCode);
       if (index != -1) {
         var dwelltime = temp[index].Timestamp - data[k].Timestamp;
-        result['_' + data[k].KeyCode].push(dwelltime)
+        result[data[k].Key].push(dwelltime)
         temp.splice(index, 1);
         keyTemp.splice(index, 1);
       } else {

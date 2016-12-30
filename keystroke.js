@@ -26,12 +26,13 @@ var jr_key = {
       switch(e.data[0]) {
         case 'runAnalysis':
         document.addEventListener('keydown', function(evt) {
+          console.log(evt);
           jr_key.count++;
           document.getElementById('currentKeyCount').innerHTML = jr_key.count;
-          jr_key.w.postMessage(['key',evt.keyCode, evt.target.name,Date.now(),evt.type])
+          jr_key.w.postMessage(['key',evt.which, evt.target.name,Date.now(),evt.type, evt.key])
         });
         document.addEventListener('keyup', function(evt) {
-          jr_key.w.postMessage(['key',evt.keyCode, evt.target.name,Date.now(),evt.type])
+          jr_key.w.postMessage(['key',evt.which, evt.target.name,Date.now(),evt.type,evt.key])
         });
         break;
       }
