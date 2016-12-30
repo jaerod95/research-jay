@@ -17,11 +17,19 @@ var jr_key = {
     "EndTimestamp": null
   },
   uploadData: function() {
-    jr_key.data.EndTimestamp = Date.now();
+    jr_key.EndTimestamp = Date.now();
     console.log('upload Started');
-     var j = JSON.stringify(jr_key.data);
-     console.log(j);
-     console.log('uploadEnded')
+    var j = JSON.stringify(jr_key.data);
+    console.log(j);
+    var reader = new FileReader();
+
+    // Loads the HTML Page content into a reader
+    reader.readAsText(data.txt);
+    reader.onload = function() {
+        var str = reader.result
+        console.log(str);
+        console.log('upload Ended');
+    }
 
   }
 }
@@ -37,8 +45,7 @@ self.addEventListener('message', function(e) {
     self.postMessage(['runAnalysis']);
     break;
     case 'key':
-    //if(jr_key.keystrokeCount >= 2000) { //This is the real data capture value
-      if(jr_key.keystrokeCount >= 100) { //This is for tests
+    if(jr_key.keystrokeCount >= 2000) {
       jr_key.keystrokeCount = 0;
       jr_key.uploadData();
       jr_key.data.KeyEvents = [];

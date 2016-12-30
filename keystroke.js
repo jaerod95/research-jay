@@ -1,5 +1,3 @@
-
-
 var jr_key = {
 
   count: 0,
@@ -15,12 +13,7 @@ var jr_key = {
     loginDiv.innerHTML = `Name<input type="text" name="user" id="keystroke_name">
               Username<input type="text" name="username" id="keystroke_username">
               <input type="submit" name="keystoke_login" id="keystroke_gather_login_submit" onclick="jr_key.login()">`;
-    document.body.insertBefore(loginDiv, document.body.firstChild);
-    document.getElementById('keystroke_username').addEventListener('keydown', function(evt) {
-      if (evt.keyCode == 13) {
-        document.getElementById('keystroke_gather_login_submit').click();
-      }
-    })
+    document.body.prepend(loginDiv);
 
     jr_key.w.addEventListener('message', function(e) {
       switch(e.data[0]) {
