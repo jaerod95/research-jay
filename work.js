@@ -2,21 +2,23 @@ console.log('work.js ran');
 
 var jr_key = {
   keystrokeCount: 0,
-  data: {
-    "Id": null,
-    "StartingEventType": 'focusin',
-    "EndingEventType": 'focusout',
-    "StartTimestamp": null,
-    "Target": null,
-    "KeyEvents": [
-      //      "KeyCode": evt.keyCode,
-      //      "Target": evt.target.name,
-      //      "Timestamp": Date.now(),
-      //      "EventType": evt.type
-      //      "Key": evt.key
+  data          : {
+    "Id"                : null,
+    "StartingEventType" : 'focusin',
+    "EndingEventType"   : 'focusout',
+    "StartTimestamp"    : null,
+    "Target"            : null,
+    "KeyEvents"         : [
+      // "KeyCode"      : evt.keyCode,
+      // "Target"       : evt.target.name,
+      // "Timestamp"    : Date.now(),
+      // "EventType"    : evt.type
+      // "Key"          : evt.key
     ],
-    "EndTimestamp": null
+    "EndTimestamp"      : null
   },
+
+
   uploadData: function() {
     jr_key.data.EndTimestamp = Date.now();
     console.log('upload Started');
@@ -45,11 +47,11 @@ self.addEventListener('message', function(e) {
       jr_key.data.KeyEvents = [];
     }
     var keystroke_obj = {
-      "KeyCode": e.data[1],
-      "Target": e.data[2],
-      "Timestamp": e.data[3],
-      "EventType": e.data[4],
-      "Key": e.data[5]
+      "KeyCode"   : e.data[1],
+      "Target"    : e.data[2],
+      "Timestamp" : e.data[3],
+      "EventType" : e.data[4],
+      "Key"       : e.data[5]
     };
 
     jr_key.data.KeyEvents.push(keystroke_obj)

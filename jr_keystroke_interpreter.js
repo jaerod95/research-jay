@@ -1,5 +1,4 @@
 //////////////////////////////////////////////////////////////
-//                                                          //
 //  TODO:                                                   //
 // 1. Need to write test cases                              //
 // 2. Need to check about not alpha numeric characters      //
@@ -8,7 +7,6 @@
 // 5. Make the data input section look good.                //
 // 6. Make everything look good for that.                   //
 //////////////////////////////////////////////////////////////
-
 
 /******************************************************************
  * Main variable to contail all funcitons out of the global scope *
@@ -37,14 +35,15 @@ var jr_keystroke_analyzer = {
       jr_keystroke_analyzer.parse(jr_keystroke_analyzer.data);
     }
   },
-  /**
-   * All Analysis Start Here, Calculates:
-   *  Dwell Time,
-   *  Flight Time,
-   *  N-Graph
-   * @param  {String} str Data in String Format
-   * @return {void}       void;
-   */
+
+  /************************************************
+   * All Analysis Start Here, Calculates:         *
+   *  Dwell Time,                                 *
+   *  Flight Time,                                *
+   *  N-Graph                                     *
+   * @param  {String} str Data in String Format   *
+   * @return {void}       void;                   *
+   ************************************************/
   parse: function(str) {
     jr_keystroke_analyzer.data_in_json  = JSON.parse(str);
 
@@ -54,8 +53,8 @@ var jr_keystroke_analyzer = {
     jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data_in_json.KeyEvents);
     console.log(jr_keystroke_analyzer.orderedEvents);
 
-    //jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.data_in_json.KeyEvents);
-    //console.log(jr_keystroke_analyzer.flight_time)
+    jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
+    console.log(jr_keystroke_analyzer.flight_time)
     //jr_keystroke_analyzer.n_graph = jr_keystroke_analyzer.calculateNGraph(jr_keystroke_analyzer.orderedEvents);
   },
 
@@ -150,7 +149,6 @@ var jr_keystroke_analyzer = {
  * Converts JSON Object into CSV Format (dwelltime)       *
  * @param {JSON} obj JSON object to convert to CSV format *
  **********************************************************/
-
   ConvertToCSV: function(obj) {
     var csv = {
       data: []
@@ -216,28 +214,105 @@ var jr_keystroke_analyzer = {
     return result;
   },
 
+/************************************************************
+ * Calculates the flight time between all key combinations, *
+ * uses the formula: FTtype1,n=Pn+1−Rn.                     *
+ * @param  {array} obj An ordered array of keystrokes       *
+ * @return {JSON}     A JSON object of the Flight Times     *
+ ************************************************************/
 
   calculateFlightTimeOne: function(obj) {
-    // FTtype1,n=Pn+1−Rn,
-    console.log('calculate flight time here')
+    var result = {};
+
+    for (var i = 0; i < obj.length - 1; i++) {
+      var flight_time   = obj[i+1].Press - obj[i].Release;
+      var from_key      = obj[i].allData[0].Key;
+      var to_key        = obj[i+1].allData[0].Key;
+      var both_keys     = form_key + to_key;
+      if (result.hasOwnProperty(both_keys)) {
+        result[both_keys].FlightTime.push(flight_time);
+      } else {
+        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        result[both_keys] = temp;
+      }
+    }
+    console.log(result);
+    return result;
   },
 
-
+  /************************************************************
+   * Calculates the flight time between all key combinations, *
+   * uses the formula: FTtype2,n=Rn+1−Rn.                     *
+   * @param  {array} obj An ordered array of keystrokes       *
+   * @return {JSON}     A JSON object of the Flight Times     *
+   ************************************************************/
   calculateFlightTimeTwo: function(obj) {
-    // FTtype2,n=Rn+1−Rn,
-    console.log('calculate flight time here')
+    var result = {};
+
+    for (var i = 0; i < obj.length - 1; i++) {
+      var flight_time   = obj[i+1].Release - obj[i].Release;
+      var from_key      = obj[i].allData[0].Key;
+      var to_key        = obj[i+1].allData[0].Key;
+      var both_keys     = form_key + to_key;
+      if (result.hasOwnProperty(both_keys)) {
+        result[both_keys].FlightTime.push(flight_time);
+      } else {
+        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        result[both_keys] = temp;
+      }
+    }
+    console.log(result);
+    return result;
   },
 
-
+  /************************************************************
+   * Calculates the flight time between all key combinations, *
+   * uses the formula: FTtype3,n=Pn+1−Pn.                     *
+   * @param  {array} obj An ordered array of keystrokes       *
+   * @return {JSON}     A JSON object of the Flight Times     *
+   ************************************************************/
   calculateFlightTimeThree: function(obj) {
-    // FTtype3,n=Pn+1−Pn,
-    console.log('calculate flight time here')
+    var result = {};
+
+    for (var i = 0; i < obj.length - 1; i++) {
+      var flight_time   = obj[i+1].Press - obj[i].Press;
+      var from_key      = obj[i].allData[0].Key;
+      var to_key        = obj[i+1].allData[0].Key;
+      var both_keys     = form_key + to_key;
+      if (result.hasOwnProperty(both_keys)) {
+        result[both_keys].FlightTime.push(flight_time);
+      } else {
+        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        result[both_keys] = temp;
+      }
+    }
+    console.log(result);
+    return result;
   },
 
-
+  /************************************************************
+   * Calculates the flight time between all key combinations, *
+   * uses the formula: FTtype4,n=Rn+1−Pn.                     *
+   * @param  {array} obj An ordered array of keystrokes       *
+   * @return {JSON}     A JSON object of the Flight Times     *
+   ************************************************************/
   calculateFlightTimeFour: function(obj) {
-    // FTtype4,n=Rn+1−Pn,
-    console.log('calculate flight time here')
+    var result = {};
+
+    for (var i = 0; i < obj.length - 1; i++) {
+      var flight_time   = obj[i+1].Release - obj[i].Press;
+      var from_key      = obj[i].allData[0].Key;
+      var to_key        = obj[i+1].allData[0].Key;
+      var both_keys     = form_key + to_key;
+      if (result.hasOwnProperty(both_keys)) {
+        result[both_keys].FlightTime.push(flight_time);
+      } else {
+        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        result[both_keys] = temp;
+      }
+    }
+    console.log(result);
+    return result;
   },
 
 
