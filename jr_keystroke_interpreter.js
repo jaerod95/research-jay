@@ -315,6 +315,11 @@ var jr_keystroke_analyzer = {
     return result;
   },
 
+/*********************************************
+ * Calculates other N-graphs                 *
+ * @param  {JSON} obj The dataFile passed in *
+ * @return {array}     Values of n-graph     *
+ *********************************************/
 
   calculateNGraph: function(obj) {
     console.log('calculate n-graph here')
