@@ -53,7 +53,7 @@ var jr_keystroke_analyzer = {
     jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data_in_json.KeyEvents);
     console.log(jr_keystroke_analyzer.orderedEvents);
 
-    jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
+    jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.flight_time = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
     console.log(jr_keystroke_analyzer.flight_time)
     //jr_keystroke_analyzer.n_graph = jr_keystroke_analyzer.calculateNGraph(jr_keystroke_analyzer.orderedEvents);
   },
@@ -228,11 +228,11 @@ var jr_keystroke_analyzer = {
       var flight_time   = obj[i+1].Press - obj[i].Release;
       var from_key      = obj[i].allData[0].Key;
       var to_key        = obj[i+1].allData[0].Key;
-      var both_keys     = form_key + to_key;
+      var both_keys     = from_key + to_key;
       if (result.hasOwnProperty(both_keys)) {
         result[both_keys].FlightTime.push(flight_time);
       } else {
-        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        var temp = {"From": from_key, "To": to_key, "FlightTime": [flight_time]};
         result[both_keys] = temp;
       }
     }
@@ -253,11 +253,11 @@ var jr_keystroke_analyzer = {
       var flight_time   = obj[i+1].Release - obj[i].Release;
       var from_key      = obj[i].allData[0].Key;
       var to_key        = obj[i+1].allData[0].Key;
-      var both_keys     = form_key + to_key;
+      var both_keys     = from_key + to_key;
       if (result.hasOwnProperty(both_keys)) {
         result[both_keys].FlightTime.push(flight_time);
       } else {
-        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        var temp = {"From": from_key, "To": to_key, "FlightTime": [flight_time]};
         result[both_keys] = temp;
       }
     }
@@ -278,11 +278,11 @@ var jr_keystroke_analyzer = {
       var flight_time   = obj[i+1].Press - obj[i].Press;
       var from_key      = obj[i].allData[0].Key;
       var to_key        = obj[i+1].allData[0].Key;
-      var both_keys     = form_key + to_key;
+      var both_keys     = from_key + to_key;
       if (result.hasOwnProperty(both_keys)) {
         result[both_keys].FlightTime.push(flight_time);
       } else {
-        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        var temp = {"From": from_key, "To": to_key, "FlightTime": [flight_time]};
         result[both_keys] = temp;
       }
     }
@@ -303,11 +303,11 @@ var jr_keystroke_analyzer = {
       var flight_time   = obj[i+1].Release - obj[i].Press;
       var from_key      = obj[i].allData[0].Key;
       var to_key        = obj[i+1].allData[0].Key;
-      var both_keys     = form_key + to_key;
+      var both_keys     = from_key + to_key;
       if (result.hasOwnProperty(both_keys)) {
         result[both_keys].FlightTime.push(flight_time);
       } else {
-        var temp = {"From": a, "To": b, "FlightTime": [flight_time]};
+        var temp = {"From": from_key, "To": to_key, "FlightTime": [flight_time]};
         result[both_keys] = temp;
       }
     }

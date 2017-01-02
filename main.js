@@ -8,8 +8,6 @@ app.on('window-all-closed', () => {
 
 app.on('ready', () => {
   const {width, height} = require('electron').screen.getPrimaryDisplay().workAreaSize
-
-
   gather = new BrowserWindow({
     width: width * .75,
     height: height,

@@ -1,9 +1,10 @@
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
 
 
 var jr_key = {
   count: 0,
   w: new Worker('C:/Users/Jason%20Rodriguez/Documents/8_WORK/2_RESEARCH_JAY/research-jay/work.js'),
-
 
   init: function() {
 

@@ -1,4 +1,10 @@
-console.log('work.js ran');
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+var username = 'anJvZDk1';
+var password = 'aGFwcHlkYXlz';
+
+const url = 'mongodb://' + atob(username) + ':' + Buffer.from(password, 'base64') + '@ds151108.mlab.com:51108/keystroke-data';
 
 var jr_key = {
   keystrokeCount: 0,
@@ -26,6 +32,11 @@ var jr_key = {
      console.log(j);
      console.log('uploadEnded')
 
+     MongoClient.connect(url, function(err, db) {
+       assert.equal(null, err);
+       console.log("Connected successfully to server");
+
+     });
   }
 }
 
