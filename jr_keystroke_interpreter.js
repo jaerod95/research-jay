@@ -3,7 +3,7 @@
 // 1. Need to write test cases                              //
 // 2. Need to check about not alpha numeric characters      //
 // 3. Need to finish N-graphs                               //
-// 4. Need to talk to Jay about storind the data somewhere. //
+// 4. Need to talk to Jay about storing the data somewhere. //
 // 5. Make the data input section look good.                //
 // 6. Make everything look good for that.                   //
 //////////////////////////////////////////////////////////////
@@ -53,9 +53,21 @@ var jr_keystroke_analyzer = {
     jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data_in_json.KeyEvents);
     console.log(jr_keystroke_analyzer.orderedEvents);
 
-    jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.flight_time = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
-    console.log(jr_keystroke_analyzer.flight_time)
+    jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
+    console.log(jr_keystroke_analyzer.flight_time_one)
+
+    jr_keystroke_analyzer.flight_time_two = jr_keystroke_analyzer.calculateFlightTimeTwo(jr_keystroke_analyzer.orderedEvents);
+    console.log(jr_keystroke_analyzer.flight_time_two)
+
+    jr_keystroke_analyzer.flight_time_three = jr_keystroke_analyzer.calculateFlightTimeThree(jr_keystroke_analyzer.orderedEvents);
+    console.log(jr_keystroke_analyzer.flight_time_three)
+
+    jr_keystroke_analyzer.flight_time_four = jr_keystroke_analyzer.calculateFlightTimeFour(jr_keystroke_analyzer.orderedEvents);
+    console.log(jr_keystroke_analyzer.flight_time_four)
+
+
     //jr_keystroke_analyzer.n_graph = jr_keystroke_analyzer.calculateNGraph(jr_keystroke_analyzer.orderedEvents);
+    //console.log(jr_keystroke_analyzer.n_graph);
   },
 
   /*****************************************************************************
@@ -174,7 +186,6 @@ var jr_keystroke_analyzer = {
         }
       }
     }
-    console.log(JSON.stringify(csv));
     return csv;
   },
 
@@ -236,7 +247,6 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    console.log(result);
     return result;
   },
 
@@ -261,7 +271,6 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    console.log(result);
     return result;
   },
 
@@ -286,7 +295,6 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    console.log(result);
     return result;
   },
 
@@ -311,7 +319,6 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    console.log(result);
     return result;
   },
 
