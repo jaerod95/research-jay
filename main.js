@@ -9,7 +9,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   const {width, height} = require('electron').screen.getPrimaryDisplay().workAreaSize
   gather = new BrowserWindow({
-    width: width * .75,
+    width: width,
     height: height,
     x: 0,
     y: 0,
@@ -23,7 +23,7 @@ app.on('ready', () => {
   });
 
 
-  win = new BrowserWindow({
+  /*win = new BrowserWindow({
     width: width * .25,
     width: height,
     x: width * .4,
@@ -38,5 +38,5 @@ app.on('ready', () => {
   win.openDevTools();
   win.on('closed', () => {
     win = null;
-  });
+  });*/
 });

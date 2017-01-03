@@ -1,15 +1,22 @@
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
+/**
+ * TO DO
+ * 1.need to finish the create user part
+ * 2. need to reset all the upload data info
+ * 3. need to create a collection for how many data types in each section since last process.
+ */
+const apiKey='nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-';
+var URL = 'https://api.mlab.com/api/1/databases/keystroke-data/collections/';
 
-var username = 'anJvZDk1';
-var password = 'aGFwcHlkYXlz';
-
-const url = 'mongodb://' + atob(username) + ':' + Buffer.from(password, 'base64') + '@ds151108.mlab.com:51108/keystroke-data';
-
+/**********************************************
+ * Variable object to non-globalize functions *
+ * @type {Object}                             *
+ **********************************************/
 var jr_key = {
-  keystrokeCount: 0,
-  data          : {
+  keystrokeCount        : 0,
+  data                  : {
     "Id"                : null,
+    "ActingUsername"    : null,
+    "Username"          : null,
     "StartingEventType" : 'focusin',
     "EndingEventType"   : 'focusout',
     "StartTimestamp"    : null,
@@ -24,35 +31,172 @@ var jr_key = {
     "EndTimestamp"      : null
   },
 
+  /**********************************************
+   * Uploads the data to the mongoDB Database   *
+   * @return {void} void                        *
+   **********************************************/
+    uploadData: function() {
 
-  uploadData: function() {
-    jr_key.data.EndTimestamp = Date.now();
-    console.log('upload Started');
-     var j = JSON.stringify(jr_key.data);
-     console.log(j);
-     console.log('uploadEnded')
+      self.postMessage(['data', jr_key.data]);
 
-     MongoClient.connect(url, function(err, db) {
-       assert.equal(null, err);
-       console.log("Connected successfully to server");
 
-     });
+      jr_key.data.EndTimestamp = Date.now();
+      console.log('upload Started');
+
+      var getData = new XMLHttpRequest();
+      var sendData = new XMLHttpRequest();
+
+      getData.open('GET', URL + jr_key.data.Username + '?apiKey=' + apiKey + '&q={"_id":"' + jr_key.data.Username + '-data-files"}');
+
+      getData.setRequestHeader('Content-Type', 'application/json');
+
+      getData.onload = function() {
+
+        if (getData.status === 200) {
+        var response = JSON.parse(getData.responseText);
+        var TYPE = null;
+        console.log(response);
+        if (!response[0]) {
+          console.log('DNE');
+          TYPE = 'POST';
+          response = {};
+          response['_id'] = jr_key.data.Username + '-data-files';
+          response[jr_key.data.ActingUsername] = [jr_key.data];
+
+          jr_key.createUser();
+
+
+        }
+        else if (response[0][jr_key.data.ActingUsername]) {
+          TYPE = 'PUT';
+          response[0][jr_key.data.ActingUsername].push(jr_key.data);
+        } else {
+          TYPE = 'PUT'
+          response[0][jr_key.data.ActingUsername] = [jr_key.data];
+        }
+
+        var data = JSON.stringify(response);
+
+        sendData.open(TYPE, URL + jr_key.data.Username + '?apiKey=' + apiKey);
+        sendData.setRequestHeader('Content-Type', 'application/json');
+        sendData.onload = function() {
+
+          if (sendData.status == 200 || sendData.status == 201) {
+            console.log(sendData.responseText);
+          } else {
+            console.log(sendData.status);
+            console.log(sendData.responseText);
+          }
+        };
+        sendData.send(data);
+    }
+
+    else if (getData.status !== 200) {
+        console.log('Request failed.  Returned status of ' + getData.status);
+        console.log(getData.responseText)
+    }
+  };
+  getData.send();
+
+},
+//NEED TO FINISH THIS
+createUser: function() {
+
+  var getData = new XMLHttpRequest();
+  var sendData = new XMLHttpRequest();
+
+  getData.open('GET', URL + 'users?apiKey=' + apiKey + '&q={"_id":"Users"}');
+
+  getData.setRequestHeader('Content-Type', 'application/json');
+
+  getData.onload = function() {
+
+    if (getData.status === 200) {
+
+    var response = JSON.parse(getData.responseText);
+    var TYPE = null;
+    console.log(response);
+    response[0][users].push(jr_key.data.Username);
+
+    var data = JSON.stringify(response);
+
+    sendData.open(TYPE, URL + jr_key.data.Username + '?apiKey=' + apiKey);
+    sendData.setRequestHeader('Content-Type', 'application/json');
+    sendData.onload = function() {
+
+      if (sendData.status == 200 || sendData.status == 201) {
+        console.log(sendData.responseText);
+      } else {
+        console.log(sendData.status);
+        console.log(sendData.responseText);
+      }
+    };
+    sendData.send(data);
   }
+
+  else if (getData.status !== 200) {
+    console.log('Request failed.  Returned status of ' + getData.status);
+    console.log(getData.responseText)
+  }
+  };
+  getData.send();
+
+//old
+  var createUser = new XMLHttpRequest();
+  createUser.open('PUT', URL + 'users?apiKey=' + apiKey + '&q={"_id":"Users"}');
+  createUser.setRequestHeader('Content-Type', 'application/json');
+
+  createUser.onload = function() {
+    if (createUser.status == 200 || createUser.status == 201) {
+      console.log(createUser.responseText);
+    }
+    else {
+      console.log(createUser.status);
+      console.log(createUser.responseText);
+    }
+  }
+    var temp = {};
+    temp["_id"] = 'Users';
+    temp["users"] = [""];
+    var data = JSON.stringify(temp);
+  createUser.send(data);
 }
+}
+
+/******************************************************************************
+ * Function switchboard that listens for input from the keystroke.js file and *
+ * pipes the request to the right function                                    *
+ * @type {switchboard}                                                        *
+ ******************************************************************************/
 
 self.addEventListener('message', function(e) {
   switch(e.data[0]) {
+
+    /********************************************************************
+     * //Creates the session ID == Date-(loginName-username)b64 Encoded *
+     ********************************************************************/
     case 'createSession':
-    //Creates the session ID == Date-(loginName-username)b64 Encoded
-    jr_key.data.Id = Date.now() + '-' + btoa(e.data[1][0]) + '-' + btoa(e.data[1][1]);
-    jr_key.data.StartTimestamp = Date.now();
-    jr_key.data.Target = e.data[1][2];
+
+    jr_key.data.Id              = Date.now()
+                                + '-'
+                                + btoa(e.data[1][0])
+                                + '-'
+                                + btoa(e.data[1][1]);
+    jr_key.data.ActingUsername  = e.data[1].keystroke_login_name;
+    jr_key.data.Username        = e.data[1].keystroke_login_username;
+
+    jr_key.data.StartTimestamp  = Date.now();
+    jr_key.data.Target          = e.data[1][2];
 
     self.postMessage(['runAnalysis']);
     break;
+
+    /**************************************************************
+     * Gathers the keystroke data and pushes it to the data node  *
+     **************************************************************/
     case 'key':
-    //if(jr_key.keystrokeCount >= 2000) { //This is the real data capture value
-      if(jr_key.keystrokeCount >= 100) { //This is for tests
+    //if(jr_key.keystrokeCount >= 2000)  //This is the real data capture value
+      if(jr_key.keystrokeCount >= 10) { //This is for tests
       jr_key.keystrokeCount = 0;
       jr_key.uploadData();
       jr_key.data.KeyEvents = [];
@@ -70,9 +214,5 @@ self.addEventListener('message', function(e) {
       jr_key.keystrokeCount++;
     }
     break;
-    case 'u':
-    if (e.data[1] == 'keyCount')
-      console.log(jr_key.keystrokeCount);
-    break;
   }
-}, false);
+});

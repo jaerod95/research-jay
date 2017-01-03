@@ -1,10 +1,8 @@
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-
 
 var jr_key = {
-  count: 0,
-  w: new Worker('C:/Users/Jason%20Rodriguez/Documents/8_WORK/2_RESEARCH_JAY/research-jay/work.js'),
+  count : 0,
+  data  : {},
+  w     : new Worker('C:/Users/Jason%20Rodriguez/Documents/8_WORK/2_RESEARCH_JAY/research-jay/work.js'),
 
   init: function() {
 
@@ -13,7 +11,7 @@ var jr_key = {
     loginDiv.id         = "keystroke_gather_login";
     loginDiv.style      = `width: 100%; height: 25px;
                            display: flex; justify-content: space-between;`;
-    loginDiv.innerHTML  = `Name<input type="text" name="user" id="keystroke_name">
+    loginDiv.innerHTML  = `Acting Username<input type="text" name="user" id="keystroke_name">
               Username<input type="text" name="username" id="keystroke_username">
               <input type="submit" name="keystoke_login" id="keystroke_gather_login_submit" onclick="jr_key.login()">`;
     document.body.insertBefore(loginDiv, document.body.firstChild);
@@ -27,7 +25,7 @@ var jr_key = {
       switch(e.data[0]) {
         case 'runAnalysis':
         document.addEventListener('keydown', function(evt) {
-          console.log(evt);
+          //console.log(evt);
           jr_key.count++;
           document.getElementById('currentKeyCount').innerHTML = jr_key.count;
           jr_key.w.postMessage(['key',evt.which, evt.target.name,Date.now(),evt.type, evt.key])
@@ -36,6 +34,12 @@ var jr_key = {
           jr_key.w.postMessage(['key',evt.which, evt.target.name,Date.now(),evt.type,evt.key])
         });
         break;
+        case 'data':
+        jr_key.data = e.data[1];
+        break;
+        case 'console':
+        console.log('this ran');
+        console.log(e.data[1]);
       }
     }, false);
   },
@@ -53,11 +57,5 @@ var jr_key = {
 
     jr_key.w.postMessage(['createSession',{keystroke_login_name,keystroke_login_username,tarLoc}]);
   },
-
-
-  u: function(evt) {
-    if (evt === 'keyCount')
-      jr_key.w.postMessage(['u','keyCount']);
-  }
 }
 document.addEventListener('DOMContentLoaded', jr_key.init);
