@@ -4,7 +4,7 @@
  * 2. need to reset all the upload data info
  * 3. need to create a collection for how many data types in each section since last process.
  */
-
+console.log('Work.js Initiated')
 /**********************************************
  * Variable object to non-globalize functions *
  * @type {Object}                             *

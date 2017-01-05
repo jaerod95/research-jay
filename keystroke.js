@@ -12,7 +12,7 @@ var jr_key  = {
   apiKey    : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
   URL       : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
   users     : undefined,
-  w         : new Worker('C:/Users/Jason%20Rodriguez/Documents/8_WORK/2_RESEARCH_JAY/research-jay/work.js'),
+  w         : new Worker('https://cdn.rawgit.com/jaerod95/research-jay/master/work.js'),
 
   /*********************************************************
    * Creates the login bar at the top of the html document *
