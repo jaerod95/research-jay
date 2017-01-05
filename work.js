@@ -102,7 +102,6 @@ var jr_key = {
 
               if (sendData.status == 200 || sendData.status == 201) {
 
-                console.log(sendData.responseText);
                 console.log('Upload Ended')
 
               } 
