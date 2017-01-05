@@ -183,7 +183,7 @@ var jr_key  = {
 document.addEventListener('DOMContentLoaded', jr_key.init);
 
 var blob = new Blob([
-    `/**
+`/**
  * TO DO
  * 1.need to finish the create user part
  * 2. need to reset all the upload data info
@@ -199,7 +199,7 @@ var jr_key = {
   apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
   URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
   data            : {
-                      "Id"                : null,
+                      "_Id"                : null,
                       "ActingUsername"    : null,
                       "Username"          : null,
                       "StartingEventType" : 'focusin',
@@ -222,89 +222,37 @@ var jr_key = {
    **********************************************/
   uploadData: function () {
 
-    //self.postMessage(['data', jr_key.data]); //this is for localizing the data if you would like to see it for debugging.
-
+    self.postMessage(['data', jr_key.data]); //this is for localizing the data if you would like to see it for debugging.
+    console.log(jr_key.data)
     jr_key.data.EndTimestamp = Date.now();
     console.log('upload Started');
 
 
-    var getData     = jr_key.sendRequest('GET', jr_key.URL + jr_key.data.Username + '?apiKey=' + jr_key.apiKey + '&q={"_id":"' + jr_key.data.Username + '-data-files"}', null);
-    var getResults  = setInterval(results, 100);
+    var sendData = jr_key.sendRequest('POST', jr_key.URL + jr_key.data.Username + '-AS-' + JR_KEY.DATA.ActingUsername + '?apiKey=' + jr_key.apiKey, JSON.stringify(jr_key.data));
+    var getResults2 = setInterval(results2, 100);
 
-    function results() {
+    function results2() {
 
-
-      if (!getData.responseText) {
+      if (!sendData.responseText) {
         return
       }
 
       else {
 
-        clearInterval(getResults);
-        var response = JSON.parse(getData.responseText);
+        clearInterval(getResults2);
 
-        if (getData.status === 200) {
+        if (sendData.status == 200 || sendData.status == 201) {
 
-          var response  = JSON.parse(getData.responseText);
-          var TYPE      = null;
+          console.log('Upload Ended')
 
-          if (!response[0]) {
-
-            TYPE = 'POST';
-            response                              = {};
-            response['_id']                       = jr_key.data.Username + '-data-files';
-            response[jr_key.data.ActingUsername]  = [jr_key.data];
-
-          }
-
-          else if (response[0][jr_key.data.ActingUsername]) {
-
-            TYPE = 'PUT';
-            response[0][jr_key.data.ActingUsername].push(jr_key.data);
-
-          }
-          
-          else {
-
-            TYPE = 'PUT'
-            response[0][jr_key.data.ActingUsername] = [jr_key.data];
-
-          }
-
-          var data          = JSON.stringify(response);
-          var sendData      = jr_key.sendRequest(TYPE, jr_key.URL + jr_key.data.Username + '?apiKey=' + jr_key.apiKey, data);
-          var getResults2   = setInterval(results2, 100);
-
-          function results2() {
-
-            if (!sendData.responseText) {
-              return
-            }
-
-            else {
-
-              clearInterval(getResults2);
-
-              if (sendData.status == 200 || sendData.status == 201) {
-
-                console.log('Upload Ended')
-
-              } 
-              
-              else {
-
-                console.log(sendData.status);
-                console.log(sendData.responseText);
-                console.log('Second Upload Failed')
-
-              }
-            }
-          }
         }
 
         else {
-          console.log('Request failed.  Returned status of ' + getData.status);
-          console.log(getData.responseText)
+
+          console.log(sendData.status);
+          console.log(sendData.responseText);
+          console.log('Second Upload Failed')
+
         }
       }
     }
@@ -345,7 +293,7 @@ self.addEventListener('message', function (e) {
      ********************************************************************/
     case 'createSession':
 
-      jr_key.data.Id = Date.now()
+      jr_key.data._Id = Date.now()
         + '-'
         + btoa(e.data[1][0])
         + '-'
@@ -363,7 +311,7 @@ self.addEventListener('message', function (e) {
      * Gathers the keystroke data and pushes it to the data node  *
      **************************************************************/
     case 'key':
-      if(jr_key.keystrokeCount >= 2000) { //This is the real data capture value
+      if (jr_key.keystrokeCount >= 2000) { //This is the real data capture value
       //if (jr_key.keystrokeCount >= 20) { //This is for tests
         jr_key.keystrokeCount = 0;
         jr_key.uploadData();
