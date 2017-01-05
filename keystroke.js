@@ -93,7 +93,6 @@ var jr_key  = {
     var getResults  = setInterval(results, 100);
 
     function results() {
-      console.log('this ran')
 
       if (!result.responseText) {
         return
@@ -144,13 +143,11 @@ var jr_key  = {
 
         if (!jr_key.users.find(function (e) { return e == keystroke_login_name })) {
           err1 = true;
-          console.log('Incorrect Acting Name');
           document.getElementById('keystroke_error_message_username').innerHTML = 'Incorrect Acting Name'
         }
 
         if (!jr_key.users.find(function (e) { return e == keystroke_login_username })) {
           err2 = true;
-          console.log('Incorrect Username');
           document.getElementById('keystroke_error_message_user').innerHTML = 'Incorrect Username'
         }
 

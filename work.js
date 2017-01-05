@@ -4,32 +4,32 @@
  * 2. need to reset all the upload data info
  * 3. need to create a collection for how many data types in each section since last process.
  */
-const apiKey = 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-';
-var URL = 'https://api.mlab.com/api/1/databases/keystroke-data/collections/';
 
 /**********************************************
  * Variable object to non-globalize functions *
  * @type {Object}                             *
  **********************************************/
 var jr_key = {
-  keystrokeCount: 0,
-  data: {
-    "Id": null,
-    "ActingUsername": null,
-    "Username": null,
-    "StartingEventType": 'focusin',
-    "EndingEventType": 'focusout',
-    "StartTimestamp": null,
-    "Target": null,
-    "KeyEvents": [
-      // "KeyCode"      : evt.keyCode,
-      // "Target"       : evt.target.name,
-      // "Timestamp"    : Date.now(),
-      // "EventType"    : evt.type
-      // "Key"          : evt.key
-    ],
-    "EndTimestamp": null
-  },
+  keystrokeCount  : 0,
+  apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
+  URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
+  data            : {
+                      "Id"                : null,
+                      "ActingUsername"    : null,
+                      "Username"          : null,
+                      "StartingEventType" : 'focusin',
+                      "EndingEventType"   : 'focusout',
+                      "StartTimestamp"    : null,
+                      "Target"            : null,
+                      "KeyEvents"         : [
+                      // "KeyCode"        : evt.keyCode,
+                      // "Target"         : evt.target.name,
+                      // "Timestamp"      : Date.now(),
+                      // "EventType"      : evt.type,
+                      // "Key"            : evt.key
+                      ],
+                      "EndTimestamp"      : null
+                    },
 
   /**********************************************
    * Uploads the data to the mongoDB Database   *
@@ -37,112 +37,93 @@ var jr_key = {
    **********************************************/
   uploadData: function () {
 
-    self.postMessage(['data', jr_key.data]);
+    //self.postMessage(['data', jr_key.data]); //this is for localizing the data if you would like to see it for debugging.
 
     jr_key.data.EndTimestamp = Date.now();
     console.log('upload Started');
 
 
-    var getData = jr_key.sendRequest('GET', URL + jr_key.data.Username + '?apiKey=' + apiKey + '&q={"_id":"' + jr_key.data.Username + '-data-files"}');
+    var getData     = jr_key.sendRequest('GET', jr_key.URL + jr_key.data.Username + '?apiKey=' + jr_key.apiKey + '&q={"_id":"' + jr_key.data.Username + '-data-files"}', null);
+    var getResults  = setInterval(results, 100);
 
-    if (getData.status === 200) {
-      var response = JSON.parse(getData.responseText);
-      var TYPE = null;
-      console.log(response);
-      if (!response[0]) {
-        console.log('DNE');
-        TYPE = 'POST';
-        response = {};
-        response['_id'] = jr_key.data.Username + '-data-files';
-        response[jr_key.data.ActingUsername] = [jr_key.data];
+    function results() {
 
-        jr_key.createUser();
 
-      }
-      else if (response[0][jr_key.data.ActingUsername]) {
-        TYPE = 'PUT';
-        response[0][jr_key.data.ActingUsername].push(jr_key.data);
-      } else {
-        TYPE = 'PUT'
-        response[0][jr_key.data.ActingUsername] = [jr_key.data];
+      if (!getData.responseText) {
+        return
       }
 
-      var data = JSON.stringify(response);
-      var sendData = jr_key.sendRequest(TYPE, URL + jr_key.data.Username + '?apiKey=' + apiKey);
-
-      if (sendData.status == 200 || sendData.status == 201) {
-        console.log(sendData.responseText);
-      } else {
-        console.log(sendData.status);
-        console.log(sendData.responseText);
-      }
-    }
-    else if (getData.status !== 200) {
-      console.log('Request failed.  Returned status of ' + getData.status);
-      console.log(getData.responseText)
-    }
-  },
-  //NEED TO FINISH THIS
-  createUser: function () {
-
-    var getData = new XMLHttpRequest();
-    var sendData = new XMLHttpRequest();
-
-    getData.open('GET', URL + 'users?apiKey=' + apiKey + '&q={"_id":"Users"}');
-
-    getData.setRequestHeader('Content-Type', 'application/json');
-
-    getData.onload = function () {
-
-      if (getData.status === 200) {
-
-        var response = JSON.parse(getData.responseText);
-        var TYPE = null;
-        console.log(response);
-        response[0][users].push(jr_key.data.Username);
-
-        var data = JSON.stringify(response);
-
-        sendData.open(TYPE, URL + jr_key.data.Username + '?apiKey=' + apiKey);
-        sendData.setRequestHeader('Content-Type', 'application/json');
-        sendData.onload = function () {
-
-          if (sendData.status == 200 || sendData.status == 201) {
-            console.log(sendData.responseText);
-          } else {
-            console.log(sendData.status);
-            console.log(sendData.responseText);
-          }
-        };
-        sendData.send(data);
-      }
-
-      else if (getData.status !== 200) {
-        console.log('Request failed.  Returned status of ' + getData.status);
-        console.log(getData.responseText)
-      }
-    };
-    getData.send();
-
-    //old
-    var createUser = new XMLHttpRequest();
-    createUser.open('PUT', URL + 'users?apiKey=' + apiKey + '&q={"_id":"Users"}');
-    createUser.setRequestHeader('Content-Type', 'application/json');
-
-    createUser.onload = function () {
-      if (createUser.status == 200 || createUser.status == 201) {
-        console.log(createUser.responseText);
-      }
       else {
-        console.log(createUser.status);
-        console.log(createUser.responseText);
+
+        clearInterval(getResults);
+        var response = JSON.parse(getData.responseText);
+
+        if (getData.status === 200) {
+
+          var response  = JSON.parse(getData.responseText);
+          var TYPE      = null;
+
+          if (!response[0]) {
+
+            TYPE = 'POST';
+            response                              = {};
+            response['_id']                       = jr_key.data.Username + '-data-files';
+            response[jr_key.data.ActingUsername]  = [jr_key.data];
+
+          }
+
+          else if (response[0][jr_key.data.ActingUsername]) {
+
+            TYPE = 'PUT';
+            response[0][jr_key.data.ActingUsername].push(jr_key.data);
+
+          }
+          
+          else {
+
+            TYPE = 'PUT'
+            response[0][jr_key.data.ActingUsername] = [jr_key.data];
+
+          }
+
+          var data          = JSON.stringify(response);
+          var sendData      = jr_key.sendRequest(TYPE, jr_key.URL + jr_key.data.Username + '?apiKey=' + jr_key.apiKey, data);
+          var getResults2   = setInterval(results2, 100);
+
+          function results2() {
+
+            if (!sendData.responseText) {
+              return
+            }
+
+            else {
+
+              clearInterval(getResults2);
+
+              if (sendData.status == 200 || sendData.status == 201) {
+
+                console.log(sendData.responseText);
+                console.log('Upload Ended')
+
+              } 
+              
+              else {
+
+                console.log(sendData.status);
+                console.log(sendData.responseText);
+                console.log('Second Upload Failed')
+
+              }
+            }
+          }
+        }
+
+        else {
+          console.log('Request failed.  Returned status of ' + getData.status);
+          console.log(getData.responseText)
+        }
       }
     }
-    var temp = {};
-    temp["_id"] = 'Users';
-    temp["users"] = [""];
-    var data = JSON.stringify(temp);
-    createUser.send(data);
   },
 
   /*************************************************************
@@ -151,15 +132,16 @@ var jr_key = {
    * @param {String} URL                                       *
    * @returns XMLHttpRequestResult                             * 
    *************************************************************/
-  sendRequest: function (TYPE, URL) {
+  sendRequest: function (TYPE, URL, DATA) {
+
     var getData = new XMLHttpRequest();
 
     getData.open(TYPE, URL);
 
     getData.setRequestHeader('Content-Type', 'application/json');
 
-    getData.send()
-    
+    getData.send(DATA)
+
     return getData
   }
 }
@@ -171,6 +153,7 @@ var jr_key = {
  ******************************************************************************/
 
 self.addEventListener('message', function (e) {
+
   switch (e.data[0]) {
 
     /********************************************************************
@@ -203,11 +186,12 @@ self.addEventListener('message', function (e) {
         jr_key.data.KeyEvents = [];
       }
       var keystroke_obj = {
-        "KeyCode": e.data[1],
-        "Target": e.data[2],
-        "Timestamp": e.data[3],
-        "EventType": e.data[4],
-        "Key": e.data[5]
+
+        "KeyCode"   : e.data[1],
+        "Target"    : e.data[2],
+        "Timestamp" : e.data[3],
+        "EventType" : e.data[4],
+        "Key"       : e.data[5]
       };
 
       jr_key.data.KeyEvents.push(keystroke_obj)
