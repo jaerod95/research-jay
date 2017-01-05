@@ -286,7 +286,7 @@ var jr_key = {
               clearInterval(getResults2);
 
               if (sendData.status == 200 || sendData.status == 201) {
-
+                
                 console.log('Upload Ended')
 
               } 
@@ -363,8 +363,8 @@ self.addEventListener('message', function (e) {
      * Gathers the keystroke data and pushes it to the data node  *
      **************************************************************/
     case 'key':
-      //if(jr_key.keystrokeCount >= 2000)  //This is the real data capture value
-      if (jr_key.keystrokeCount >= 10) { //This is for tests
+      if(jr_key.keystrokeCount >= 200) { //This is the real data capture value
+      //if (jr_key.keystrokeCount >= 20) { //This is for tests
         jr_key.keystrokeCount = 0;
         jr_key.uploadData();
         jr_key.data.KeyEvents = [];
