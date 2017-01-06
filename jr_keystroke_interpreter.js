@@ -18,6 +18,9 @@ var jr_keystroke_analyzer = {
   orderedEvents     : [],
   dwell_time        : {},
   flight_time_one   : {},
+  flight_time_two   : {},
+  flight_time_three : {},
+  flight_time_four  : {},
 
 /*********************************************************************
  * Default Constructer ran at on file upload (Testing Purposes only) *
