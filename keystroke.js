@@ -192,6 +192,7 @@ console.log('Work.js Initiated')
  * @type {Object}                             *
  **********************************************/
 var jr_key = {
+  number_of_keystrokes: 200,
   keystrokeCount  : 0,
   apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
   URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
@@ -219,8 +220,7 @@ var jr_key = {
    **********************************************/
   uploadData: function () {
 
-    self.postMessage(['data', jr_key.data]); //this is for localizing the data if you would like to see it for debugging.
-    console.log(jr_key.data)
+    //self.postMessage(['data', jr_key.data]); //this is for localizing the data if you would like to see it for debugging.
     jr_key.data.EndTimestamp = Date.now();
     console.log('upload Started');
 
@@ -241,7 +241,33 @@ var jr_key = {
         if (sendData.status == 200 || sendData.status == 201) {
 
           console.log('Upload Ended')
+          var registerSend = jr_key.sendRequest('POST', jr_key.URL + 'to-process?apiKey=' + jr_key.apiKey, JSON.stringify({"_id" : jr_key.data._id}));
+          var getResults1 = setInterval(results1, 100);
 
+          function results1() {
+
+            if (!registerSend.responseText) {
+              return
+            }
+
+            else {
+
+              clearInterval(getResults1);
+
+              if (registerSend.status == 200 || registerSend.status == 201) {
+
+                console.log('to-process uploaded');
+
+              } 
+              
+              else {
+
+                console.error(registerSend.status)
+                console.log('there was an error with updating the to process database');
+
+              }
+            }
+          }
         }
 
         else {
@@ -253,6 +279,7 @@ var jr_key = {
         }
       }
     }
+
   },
 
   /*************************************************************
@@ -308,7 +335,7 @@ self.addEventListener('message', function (e) {
      * Gathers the keystroke data and pushes it to the data node  *
      **************************************************************/
     case 'key':
-      if (jr_key.keystrokeCount >= 200) { //This is the real data capture value
+      if (jr_key.keystrokeCount >= jr_key.number_of_keystrokes) { //This is the real data capture value
       //if (jr_key.keystrokeCount >= 20) { //This is for tests
         jr_key.keystrokeCount = 0;
         jr_key.uploadData();
