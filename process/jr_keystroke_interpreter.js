@@ -1,19 +1,16 @@
 //////////////////////////////////////////////////////////////
 //  TODO:                                                   //
-// 1. Need to write test cases                              //
-// 2. Need to check about not alpha numeric characters      //
-// 3. Need to finish N-graphs                               //
-// 4. Need to talk to Jay about storing the data somewhere. //
-// 5. Make the data input section look good.                //
-// 6. Make everything look good for that.                   //
+// 1. Redo the parse to work with the array of objects.                             //
+// 2.       //
+//                           //
+//  //
+//                 //
+//                    //
 //////////////////////////////////////////////////////////////
 const fs = require('fs');
 const json2csv = require('json2csv');
 const Mongo = require('mongodb');
 const assert = require('assert');
-
-
-
 
 // Connection URL
 var url = 'mongodb://jrod95:jay-research@ds151108.mlab.com:51108/keystroke-data';
@@ -29,13 +26,12 @@ Mongo.MongoClient.connect(url, function (err, db) {
 
         var str = docs[coll].ns.substring(15);
         getDocuments(db,str, function (documents) {
-          
+          var data = [];
           for (num in documents) {
-            console.log('this ran');
-            var parser = new jr_keystroke_analyzer();
-            parser.init(documents[num]);
+            data.push(documents[num]);
           }
-
+          var parser = new jr_keystroke_analyzer();
+          parser.init(data);
         });
       }
     }
@@ -83,8 +79,10 @@ function jr_keystroke_analyzer() {
  * @return {void}       void;                                        *
  *********************************************************************/
   this.init = function(data) {
-      self.data = data;
-      self.parse(self.data);
+      for (objs in data) {
+      self.data = data[objs];
+      self.parse(objs);
+      }
   },
 
   /************************************************
@@ -119,13 +117,13 @@ function jr_keystroke_analyzer() {
     //console.log(self.n_graph);
   },
 
-       this.writeFiles = function(newDir) {
+  this.writeFiles = function(newDir) {
 
-      var dwelltime         = json2csv(self.dwell_time);
-      var flight_time_one   = json2csv(self.flight_time_one);
-      var flight_time_two   = json2csv(self.flight_time_two);
-      var flight_time_three = json2csv(self.flight_time_three);
-      var flight_time_four  = json2csv(self.flight_time_four);
+      var dwelltime         = json2csv(convertToCSVDwell(self.dwell_time));
+      var flight_time_one   = json2csv(convertToCSVFlight(self.flight_time_one));
+      var flight_time_two   = json2csv(convertToCSVFlight(self.flight_time_two));
+      var flight_time_three = json2csv(convertToCSVFlight(self.flight_time_three));
+      var flight_time_four  = json2csv(convertToCSVFlight(self.flight_time_four));
 
       fs.writeFile('../' + newDir + '/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
         if (err) throw err;
@@ -334,7 +332,7 @@ function jr_keystroke_analyzer() {
         temp.push(data[k]);
       }
     }
-    return self.convertToCSVDwell(result);
+    return result;
   },
 
 /************************************************************
@@ -359,7 +357,7 @@ function jr_keystroke_analyzer() {
         result[both_keys] = temp;
       }
     }
-    return self.convertToCSVFlight(result);
+    return result;
   },
 
   /************************************************************
@@ -383,7 +381,7 @@ function jr_keystroke_analyzer() {
         result[both_keys] = temp;
       }
     }
-    return self.convertToCSVFlight(result);
+    return result;
   },
 
   /************************************************************
@@ -407,7 +405,7 @@ function jr_keystroke_analyzer() {
         result[both_keys] = temp;
       }
     }
-    return self.convertToCSVFlight(result);
+    return result;
   },
 
   /************************************************************
@@ -431,7 +429,7 @@ function jr_keystroke_analyzer() {
         result[both_keys] = temp;
       }
     }
-    return self.convertToCSVFlight(result);
+    return result;
   },
 
 /*********************************************
