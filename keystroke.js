@@ -196,7 +196,7 @@ var jr_key = {
   apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
   URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
   data            : {
-                      "_Id"                : null,
+                      "_id"                : null,
                       "ActingUsername"    : null,
                       "Username"          : null,
                       "StartingEventType" : 'focusin',
@@ -225,7 +225,7 @@ var jr_key = {
     console.log('upload Started');
 
 
-    var sendData = jr_key.sendRequest('POST', jr_key.URL + jr_key.data.Username + '-AS-' + JR_KEY.DATA.ActingUsername + '?apiKey=' + jr_key.apiKey, JSON.stringify(jr_key.data));
+    var sendData = jr_key.sendRequest('POST', jr_key.URL + jr_key.data.Username + '-AS-' + jr_key.data.ActingUsername + '?apiKey=' + jr_key.apiKey, JSON.stringify(jr_key.data));
     var getResults2 = setInterval(results2, 100);
 
     function results2() {
@@ -290,7 +290,7 @@ self.addEventListener('message', function (e) {
      ********************************************************************/
     case 'createSession':
 
-      jr_key.data._Id = Date.now()
+      jr_key.data._id = Date.now()
         + '-'
         + btoa(e.data[1][0])
         + '-'
@@ -308,7 +308,7 @@ self.addEventListener('message', function (e) {
      * Gathers the keystroke data and pushes it to the data node  *
      **************************************************************/
     case 'key':
-      if (jr_key.keystrokeCount >= 2000) { //This is the real data capture value
+      if (jr_key.keystrokeCount >= 200) { //This is the real data capture value
       //if (jr_key.keystrokeCount >= 20) { //This is for tests
         jr_key.keystrokeCount = 0;
         jr_key.uploadData();

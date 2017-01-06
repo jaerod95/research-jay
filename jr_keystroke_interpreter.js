@@ -28,15 +28,10 @@ var jr_keystroke_analyzer = {
  * @return {void}       void;                                        *
  *********************************************************************/
   init: function(evt) {
-    var reader  = new FileReader();
-    var f       = evt.target.files;
+      const fs = require('fs');
 
-    reader.readAsText(f[0]);
-
-    reader.onload = function() {
-      jr_keystroke_analyzer.data = reader.result;
+      jr_keystroke_analyzer.data = fs.readFileSync('./test.txt', 'utf8');
       jr_keystroke_analyzer.parse(jr_keystroke_analyzer.data);
-    }
   },
 
   /************************************************
@@ -335,5 +330,4 @@ var jr_keystroke_analyzer = {
     console.log('calculate n-graph here')
   }
 }
-
-document.getElementById('jr_file').addEventListener('change', jr_keystroke_analyzer.init);
+jr_keystroke_analyzer.init()
