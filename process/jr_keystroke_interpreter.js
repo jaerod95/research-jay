@@ -10,29 +10,40 @@
 const fs = require('fs');
 const json2csv = require('json2csv');
 
+
+
+
+var parser = new jr_keystroke_analyzer();
+parser.init();
+
+
+
+
+
 /******************************************************************
  * Main variable to contail all funcitons out of the global scope *
  * @type {Object}                                                 *
  ******************************************************************/
-var jr_keystroke_analyzer = {
-  data              : "",
-  orderedEvents     : [],
-  dwell_time        : {},
-  flight_time_one   : {},
-  flight_time_two   : {},
-  flight_time_three : {},
-  flight_time_four  : {},
+function jr_keystroke_analyzer() {
+  self = this;
+  this.data              = "";
+  this.orderedEvents     = [];
+  this.dwell_time        = {};
+  this.flight_time_one   = {};
+  this.flight_time_two   = {};
+  this.flight_time_three = {};
+  this.flight_time_four  = {};
 
 /*********************************************************************
  * Default Constructer ran at on file upload (Testing Purposes only) *
  * @param  {input} evt  The file input DOMElement                    *
  * @return {void}       void;                                        *
  *********************************************************************/
-  init: function(evt) {
+  this.init = function(evt) {
 
-      jr_keystroke_analyzer.data = fs.readFileSync('../test/test.txt', 'utf8');
-      jr_keystroke_analyzer.data = JSON.parse(jr_keystroke_analyzer.data);
-      jr_keystroke_analyzer.parse();
+      self.data = fs.readFileSync('../test/test.txt', 'utf8');
+      self.data = JSON.parse(self.data);
+      self.parse(self.data);
   },
 
   /************************************************
@@ -43,72 +54,63 @@ var jr_keystroke_analyzer = {
    * @param  {String} str Data in String Format   *
    * @return {void}       void;                   *
    ************************************************/
-  parse: function() {
+  this.parse = function(data) {
 
-    jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data.KeyEvents);
-    //console.log(jr_keystroke_analyzer.orderedEvents);
+    self.orderedEvents = self.orderKeyEvents(self.data.KeyEvents);
 
-    jr_keystroke_analyzer.dwell_time = jr_keystroke_analyzer.calculateDwellTime(jr_keystroke_analyzer.data.KeyEvents);
-    jr_keystroke_analyzer.dwell_time = jr_keystroke_analyzer.ConvertToCSV(jr_keystroke_analyzer.dwell_time);
+    self.dwell_time = self.calculateDwellTime(self.data.KeyEvents);
 
-    jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
-    console.log(jr_keystroke_analyzer.flight_time_one)
+    self.flight_time_one   = self.calculateFlightTimeOne    (self.orderedEvents);
+    self.flight_time_two   = self.calculateFlightTimeTwo    (self.orderedEvents);
+    self.flight_time_three = self.calculateFlightTimeThree  (self.orderedEvents);
+    self.flight_time_four  = self.calculateFlightTimeFour   (self.orderedEvents);
 
-    fs.writeFile('./' + jr_keystroke_analyzer.data._id + '-flight-time-one.txt', JSON.stringify(jr_keystroke_analyzer.flight_time_two), function (err) {
-      if (err) throw err;
-      console.log('file saved');
-    });
-
-    jr_keystroke_analyzer.flight_time_two = jr_keystroke_analyzer.calculateFlightTimeTwo(jr_keystroke_analyzer.orderedEvents);
-    //console.log(jr_keystroke_analyzer.flight_time_two)
-
-    jr_keystroke_analyzer.flight_time_three = jr_keystroke_analyzer.calculateFlightTimeThree(jr_keystroke_analyzer.orderedEvents);
-    //console.log(jr_keystroke_analyzer.flight_time_three)
-
-    jr_keystroke_analyzer.flight_time_four = jr_keystroke_analyzer.calculateFlightTimeFour(jr_keystroke_analyzer.orderedEvents);
-    //console.log(jr_keystroke_analyzer.flight_time_four)
-
-    try {
-      var dwelltime         = json2csv(jr_keystroke_analyzer.dwell_time);
-      console.log('checkpoint 1')
-      var flight_time_one   = json2csv(jr_keystroke_analyzer.flight_time_one);
-      var flight_time_two   = json2csv(jr_keystroke_analyzer.flight_time_two);
-      var flight_time_three = json2csv(jr_keystroke_analyzer.flight_time_three);
-      var flight_time_four  = json2csv(jr_keystroke_analyzer.flight_time_four);
-
-      console.log('Made it this far');
-
-      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-dwell-time.csv', dwelltime, function (err) {
-        if (err) throw err;
-        console.log('file saved');
+      var newDir = self.data.Username;
+      fs.exists('../' + self.data.Username, function (exists) {
+        if (exists) {
+          self.writeFiles(newDir);
+        } else {
+          fs.mkdir('../' + newDir);
+          self.writeFiles(newDir);
+        }
       });
-
-      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-one.csv', flight_time_one, function (err) {
-        if (err) throw err;
-        console.log('file saved');
-      });
-
-      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-two.csv', flight_time_two, function (err) {
-        if (err) throw err;
-        console.log('file saved');
-      });
-
-      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-three.csv', flight_time_three, function (err) {
-        if (err) throw err;
-        console.log('file saved');
-      });
-
-      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-four.csv', flight_time_four, function (err) {
-        if (err) throw err;
-        console.log('file saved');
-      });
-    }
-    catch (e) {
-      console.log(e);
-    }
-    //jr_keystroke_analyzer.n_graph = jr_keystroke_analyzer.calculateNGraph(jr_keystroke_analyzer.orderedEvents);
-    //console.log(jr_keystroke_analyzer.n_graph);
+    //self.n_graph = self.calculateNGraph(self.orderedEvents);
+    //console.log(self.n_graph);
   },
+
+       this.writeFiles = function(newDir) {
+
+      var dwelltime         = json2csv(self.dwell_time);
+      var flight_time_one   = json2csv(self.flight_time_one);
+      var flight_time_two   = json2csv(self.flight_time_two);
+      var flight_time_three = json2csv(self.flight_time_three);
+      var flight_time_four  = json2csv(self.flight_time_four);
+
+      fs.writeFile('../' + newDir + '/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../' + newDir + '/flight-time-1-' + self.data._id + '.csv', flight_time_one, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../' + newDir + '/flight-time-2-' + self.data._id + '.csv', flight_time_two, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../' + newDir + '/flight-time-3-' + self.data._id + '.csv', flight_time_three, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../' + newDir + '/flight-time-4-' + self.data._id + '.csv', flight_time_four, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+      },
 
   /*****************************************************************************
    * Orders every keystroke Press and Release pair by Timestamp of Press       *
@@ -134,7 +136,7 @@ var jr_keystroke_analyzer = {
    *                                                                           *
    *     //8,9,10,14,15,27,32-127  POSSIBLE TO TRACK KEYS                      *
    ****************************************************************************/
-  orderKeyEvents: function(data) {
+  this.orderKeyEvents = function(data) {
     var result  = {};
     var str     = '{';
 
@@ -179,7 +181,7 @@ var jr_keystroke_analyzer = {
         toSort.push(result[value][j][0]);
       }
     }
-    jr_keystroke_analyzer.sortByKey(toSort,'Press');
+    self.sortByKey(toSort,'Press');
     result = toSort;
     return result;
   },
@@ -190,7 +192,7 @@ var jr_keystroke_analyzer = {
    * @param  {String} key  The property you want to sort by *
    * @return {array}       The sorted Array                 *
    **********************************************************/
-  sortByKey: function(array, key) {
+  this.sortByKey = function(array, key) {
   return array.sort(function(a, b) {
       var x = a[key]; var y = b[key];
       return ((x < y) ? -1: ((x > y) ? 1 : 0));
@@ -201,7 +203,7 @@ var jr_keystroke_analyzer = {
  * Converts JSON Object into CSV Format (dwelltime)       *
  * @param {JSON} obj JSON object to convert to CSV format *
  **********************************************************/
-  ConvertToCSV: function(obj) {
+  this.convertToCSVDwell = function(obj) {
     var csv = {
       data: []
     };
@@ -229,12 +231,45 @@ var jr_keystroke_analyzer = {
     return csv;
   },
 
+/**********************************************************
+ * Converts JSON Object into CSV Format (flightTime)      *
+ * @param {JSON} obj JSON object to convert to CSV format *
+ **********************************************************/
+  this.convertToCSVFlight = function(obj) {
+    var csv = {
+      data: []
+    };
+    for (var prop in obj) {
+      if (!obj.hasOwnProperty(prop)) {
+        continue;
+      }
+      for (var i = 0; i < obj[prop].FlightTime.length; i++) {
+        var temp = {};
+        var bool = false;
+        for (var k = 0; k < csv.data.length; k++) {
+          if (csv.data[k].hasOwnProperty(prop)) {} else {
+            var newProp = "From '" + obj[prop].From + "' To '" + obj[prop].To + "'";
+            csv.data[k][newProp] = obj[prop].FlightTime[i];
+            bool = true;
+            break;
+          }
+        }
+        if (!bool) {
+          var newProp = "From '" + obj[prop].From + "' To '" + obj[prop].To + "'";
+          temp[newProp] = obj[prop].FlightTime[i];
+          csv.data.push(temp);
+        }
+      }
+    }
+    return csv;
+  },
+
   /********************************************************
    * Calculates the DwellTime by Key                      *
    * @param  {JSON} data KeyEvents of data                *
    * @return {JSON}      JSON object of DwellTime per Key *
    ********************************************************/
-  calculateDwellTime: function(data) {
+  this.calculateDwellTime = function(data) {
     var result = {}
     var str    = '{'
 
@@ -262,7 +297,7 @@ var jr_keystroke_analyzer = {
         temp.push(data[k]);
       }
     }
-    return result;
+    return self.convertToCSVDwell(result);
   },
 
 /************************************************************
@@ -272,7 +307,7 @@ var jr_keystroke_analyzer = {
  * @return {JSON}     A JSON object of the Flight Times     *
  ************************************************************/
 
-  calculateFlightTimeOne: function(obj) {
+  this.calculateFlightTimeOne = function(obj) {
     var result = {};
 
     for (var i = 0; i < obj.length - 1; i++) {
@@ -287,7 +322,7 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    return result;
+    return self.convertToCSVFlight(result);
   },
 
   /************************************************************
@@ -296,7 +331,7 @@ var jr_keystroke_analyzer = {
    * @param  {array} obj An ordered array of keystrokes       *
    * @return {JSON}     A JSON object of the Flight Times     *
    ************************************************************/
-  calculateFlightTimeTwo: function(obj) {
+  this.calculateFlightTimeTwo = function(obj) {
     var result = {};
 
     for (var i = 0; i < obj.length - 1; i++) {
@@ -311,7 +346,7 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    return result;
+    return self.convertToCSVFlight(result);
   },
 
   /************************************************************
@@ -320,7 +355,7 @@ var jr_keystroke_analyzer = {
    * @param  {array} obj An ordered array of keystrokes       *
    * @return {JSON}     A JSON object of the Flight Times     *
    ************************************************************/
-  calculateFlightTimeThree: function(obj) {
+  this.calculateFlightTimeThree = function(obj) {
     var result = {};
 
     for (var i = 0; i < obj.length - 1; i++) {
@@ -335,7 +370,7 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    return result;
+    return self.convertToCSVFlight(result);
   },
 
   /************************************************************
@@ -344,7 +379,7 @@ var jr_keystroke_analyzer = {
    * @param  {array} obj An ordered array of keystrokes       *
    * @return {JSON}     A JSON object of the Flight Times     *
    ************************************************************/
-  calculateFlightTimeFour: function(obj) {
+  this.calculateFlightTimeFour = function(obj) {
     var result = {};
 
     for (var i = 0; i < obj.length - 1; i++) {
@@ -359,7 +394,7 @@ var jr_keystroke_analyzer = {
         result[both_keys] = temp;
       }
     }
-    return result;
+    return self.convertToCSVFlight(result);
   },
 
 /*********************************************
@@ -368,8 +403,7 @@ var jr_keystroke_analyzer = {
  * @return {array}     Values of n-graph     *
  *********************************************/
 
-  calculateNGraph: function(obj) {
+  this.calculateNGraph = function(obj) {
     console.log('calculate n-graph here')
   }
 }
-jr_keystroke_analyzer.init()
