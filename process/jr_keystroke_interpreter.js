@@ -7,6 +7,8 @@
 // 5. Make the data input section look good.                //
 // 6. Make everything look good for that.                   //
 //////////////////////////////////////////////////////////////
+const fs = require('fs');
+const json2csv = require('json2csv');
 
 /******************************************************************
  * Main variable to contail all funcitons out of the global scope *
@@ -14,7 +16,6 @@
  ******************************************************************/
 var jr_keystroke_analyzer = {
   data              : "",
-  data_in_json      : {},
   orderedEvents     : [],
   dwell_time        : {},
   flight_time_one   : {},
@@ -28,10 +29,10 @@ var jr_keystroke_analyzer = {
  * @return {void}       void;                                        *
  *********************************************************************/
   init: function(evt) {
-      const fs = require('fs');
 
-      jr_keystroke_analyzer.data = fs.readFileSync('./test.txt', 'utf8');
-      jr_keystroke_analyzer.parse(jr_keystroke_analyzer.data);
+      jr_keystroke_analyzer.data = fs.readFileSync('../test/test.txt', 'utf8');
+      jr_keystroke_analyzer.data = JSON.parse(jr_keystroke_analyzer.data);
+      jr_keystroke_analyzer.parse();
   },
 
   /************************************************
@@ -42,28 +43,69 @@ var jr_keystroke_analyzer = {
    * @param  {String} str Data in String Format   *
    * @return {void}       void;                   *
    ************************************************/
-  parse: function(str) {
-    jr_keystroke_analyzer.data_in_json  = JSON.parse(str);
+  parse: function() {
 
-    jr_keystroke_analyzer.dwell_time    = jr_keystroke_analyzer.calculateDwellTime(jr_keystroke_analyzer.data_in_json.KeyEvents);
-    console.log(jr_keystroke_analyzer.ConvertToCSV(jr_keystroke_analyzer.dwell_time));
+    jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data.KeyEvents);
+    //console.log(jr_keystroke_analyzer.orderedEvents);
 
-    jr_keystroke_analyzer.orderedEvents = jr_keystroke_analyzer.orderKeyEvents(jr_keystroke_analyzer.data_in_json.KeyEvents);
-    console.log(jr_keystroke_analyzer.orderedEvents);
+    jr_keystroke_analyzer.dwell_time = jr_keystroke_analyzer.calculateDwellTime(jr_keystroke_analyzer.data.KeyEvents);
+    jr_keystroke_analyzer.dwell_time = jr_keystroke_analyzer.ConvertToCSV(jr_keystroke_analyzer.dwell_time);
 
     jr_keystroke_analyzer.flight_time_one = jr_keystroke_analyzer.calculateFlightTimeOne(jr_keystroke_analyzer.orderedEvents);
     console.log(jr_keystroke_analyzer.flight_time_one)
 
+    fs.writeFile('./' + jr_keystroke_analyzer.data._id + '-flight-time-one.txt', JSON.stringify(jr_keystroke_analyzer.flight_time_two), function (err) {
+      if (err) throw err;
+      console.log('file saved');
+    });
+
     jr_keystroke_analyzer.flight_time_two = jr_keystroke_analyzer.calculateFlightTimeTwo(jr_keystroke_analyzer.orderedEvents);
-    console.log(jr_keystroke_analyzer.flight_time_two)
+    //console.log(jr_keystroke_analyzer.flight_time_two)
 
     jr_keystroke_analyzer.flight_time_three = jr_keystroke_analyzer.calculateFlightTimeThree(jr_keystroke_analyzer.orderedEvents);
-    console.log(jr_keystroke_analyzer.flight_time_three)
+    //console.log(jr_keystroke_analyzer.flight_time_three)
 
     jr_keystroke_analyzer.flight_time_four = jr_keystroke_analyzer.calculateFlightTimeFour(jr_keystroke_analyzer.orderedEvents);
-    console.log(jr_keystroke_analyzer.flight_time_four)
+    //console.log(jr_keystroke_analyzer.flight_time_four)
 
+    try {
+      var dwelltime         = json2csv(jr_keystroke_analyzer.dwell_time);
+      console.log('checkpoint 1')
+      var flight_time_one   = json2csv(jr_keystroke_analyzer.flight_time_one);
+      var flight_time_two   = json2csv(jr_keystroke_analyzer.flight_time_two);
+      var flight_time_three = json2csv(jr_keystroke_analyzer.flight_time_three);
+      var flight_time_four  = json2csv(jr_keystroke_analyzer.flight_time_four);
 
+      console.log('Made it this far');
+
+      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-dwell-time.csv', dwelltime, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-one.csv', flight_time_one, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-two.csv', flight_time_two, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-three.csv', flight_time_three, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+
+      fs.writeFile('../results/' + jr_keystroke_analyzer.data._id + '-flight-time-four.csv', flight_time_four, function (err) {
+        if (err) throw err;
+        console.log('file saved');
+      });
+    }
+    catch (e) {
+      console.log(e);
+    }
     //jr_keystroke_analyzer.n_graph = jr_keystroke_analyzer.calculateNGraph(jr_keystroke_analyzer.orderedEvents);
     //console.log(jr_keystroke_analyzer.n_graph);
   },

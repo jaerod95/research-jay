@@ -17,10 +17,9 @@
   },
   "homepage": "https://github.com/jaerod95/research-jay#readme",
   "devDependencies": {
-    "browserify": "^13.1.1",
-    "bson-ext": "^1.0.2",
-    "electron": "^1.4.13",
-    "jquery": "^3.1.1",
-    "mongodb": "^2.2.16"
+    
+  },
+  "dependencies": {
+    "json2csv": "^3.7.3"
   }
 }
