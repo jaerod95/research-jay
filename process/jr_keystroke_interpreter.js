@@ -10,11 +10,10 @@
 const fs = require('fs');
 const json2csv = require('json2csv');
 
-
-
-
+var data = fs.readFileSync('../test/test.txt', 'utf8');
+data = JSON.parse(data);
 var parser = new jr_keystroke_analyzer();
-parser.init();
+parser.init(data);
 
 
 
@@ -39,10 +38,8 @@ function jr_keystroke_analyzer() {
  * @param  {input} evt  The file input DOMElement                    *
  * @return {void}       void;                                        *
  *********************************************************************/
-  this.init = function(evt) {
-
-      self.data = fs.readFileSync('../test/test.txt', 'utf8');
-      self.data = JSON.parse(self.data);
+  this.init = function(data) {
+      self.data = data;
       self.parse(self.data);
   },
 
