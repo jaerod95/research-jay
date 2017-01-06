@@ -9,15 +9,59 @@
 //////////////////////////////////////////////////////////////
 const fs = require('fs');
 const json2csv = require('json2csv');
-
-var data = fs.readFileSync('../test/test.txt', 'utf8');
-data = JSON.parse(data);
-var parser = new jr_keystroke_analyzer();
-parser.init(data);
+const Mongo = require('mongodb');
+const assert = require('assert');
 
 
 
 
+// Connection URL
+var url = 'mongodb://jrod95:jay-research@ds151108.mlab.com:51108/keystroke-data';
+
+// Use connect method to connect to the server
+Mongo.MongoClient.connect(url, function (err, db) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+
+  getCollectionNames(db, function (docs) {
+    for (coll in docs) {
+      if (docs[coll].ns != 'keystroke-data.users' && docs[coll].ns != 'keystroke-data.objectlabs-system' && docs[coll].ns != 'keystroke-data.objectlabs-system.admin.collections' && docs[coll].ns != 'keystroke-data.to-process') {
+
+        var str = docs[coll].ns.substring(15);
+        getDocuments(db,str, function (documents) {
+          
+          for (num in documents) {
+            console.log('this ran');
+            var parser = new jr_keystroke_analyzer();
+            parser.init(documents[num]);
+          }
+
+        });
+      }
+    }
+    db.close();
+  });
+
+
+  function getCollectionNames(db, callback) {
+    // Get all the collections from system
+    var collection = db.collection('system.indexes');
+    // Find some documents
+    collection.find({}).toArray(function (err, docs) {
+      assert.equal(err, null);
+      callback(docs);
+    });
+  }
+
+  function getDocuments(db, str, callback) {
+    var collection = db.collection(str);
+
+    collection.find({}).toArray(function (err, documents) {
+      callback(documents);
+    });
+  }
+
+});
 
 /******************************************************************
  * Main variable to contail all funcitons out of the global scope *
@@ -85,22 +129,18 @@ function jr_keystroke_analyzer() {
 
       fs.writeFile('../' + newDir + '/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
         if (err) throw err;
-        console.log('file saved');
       });
 
       fs.writeFile('../' + newDir + '/flight-time-1-' + self.data._id + '.csv', flight_time_one, function (err) {
         if (err) throw err;
-        console.log('file saved');
       });
 
       fs.writeFile('../' + newDir + '/flight-time-2-' + self.data._id + '.csv', flight_time_two, function (err) {
         if (err) throw err;
-        console.log('file saved');
       });
 
       fs.writeFile('../' + newDir + '/flight-time-3-' + self.data._id + '.csv', flight_time_three, function (err) {
         if (err) throw err;
-        console.log('file saved');
       });
 
       fs.writeFile('../' + newDir + '/flight-time-4-' + self.data._id + '.csv', flight_time_four, function (err) {

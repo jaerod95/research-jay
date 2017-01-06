@@ -41,9 +41,9 @@ var jr_key = {
     //self.postMessage(['data', jr_key.data]); //this is for localizing the data if you would like to see it for debugging.
     jr_key.data.EndTimestamp = Date.now();
     console.log('upload Started');
+    var DATA = jr_key.data;
 
-
-    var sendData = jr_key.sendRequest('POST', jr_key.URL + jr_key.data.Username + '-AS-' + jr_key.data.ActingUsername + '?apiKey=' + jr_key.apiKey, JSON.stringify(jr_key.data));
+    var sendData = jr_key.sendRequest('POST', jr_key.URL + DATA.Username + '-AS-' + DATA.ActingUsername + '?apiKey=' + jr_key.apiKey, JSON.stringify(DATA));
     var getResults2 = setInterval(results2, 100);
 
     function results2() {
@@ -59,7 +59,7 @@ var jr_key = {
         if (sendData.status == 200 || sendData.status == 201) {
 
           console.log('Upload Ended')
-          var registerSend = jr_key.sendRequest('POST', jr_key.URL + 'to-process?apiKey=' + jr_key.apiKey, JSON.stringify({"_id" : jr_key.data._id}));
+          var registerSend = jr_key.sendRequest('POST', jr_key.URL + 'to-process?apiKey=' + jr_key.apiKey, JSON.stringify({"_id" : DATA._id}));
           var getResults1 = setInterval(results1, 100);
 
           function results1() {
@@ -154,10 +154,17 @@ self.addEventListener('message', function (e) {
      **************************************************************/
     case 'key':
       if (jr_key.keystrokeCount >= jr_key.number_of_keystrokes) { //This is the real data capture value
-      //if (jr_key.keystrokeCount >= 20) { //This is for tests
-        jr_key.keystrokeCount = 0;
         jr_key.uploadData();
-        jr_key.data.KeyEvents = [];
+
+        jr_key.data._id = Date.now()
+        + '-'
+        + btoa(jr_key.data.ActingUsername)
+        + '-'
+        + btoa(jr_key.data.Username);
+
+      jr_key.data.StartTimestamp = Date.now();
+      jr_key.data.KeyEvents = [];
+      jr_key.keystrokeCount = 0;
       }
       var keystroke_obj = {
 
