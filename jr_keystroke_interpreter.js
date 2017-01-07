@@ -136,20 +136,17 @@ function jr_keystroke_analyzer() {
      ************************************************/
     this.parse = function (data) {
 
-      self.orderedEvents = self.orderKeyEvents(self.data.KeyEvents);
-
-      self.dwell_time = self.calculateDwellTime(self.data.KeyEvents);
-
-      self.flight_time_one = self.calculateFlightTimeOne(self.orderedEvents);
-      self.flight_time_two = self.calculateFlightTimeTwo(self.orderedEvents);
-      self.flight_time_three = self.calculateFlightTimeThree(self.orderedEvents);
-      self.flight_time_four = self.calculateFlightTimeFour(self.orderedEvents);
-
-      self.dwell_time_total = self.mergeDwell(self.dwell_time, self.dwell_time_total);
-      self.flight_time_one_total = self.merge(self.flight_time_one, self.flight_time_one_total);
-      self.flight_time_two_total = self.merge(self.flight_time_two, self.flight_time_two_total);
-      self.flight_time_three_total = self.merge(self.flight_time_three, self.flight_time_three_total);
-      self.flight_time_four_total = self.merge(self.flight_time_four, self.flight_time_four_total);
+      self.orderedEvents            = self.orderKeyEvents(self.data.KeyEvents);
+      self.dwell_time               = self.calculateDwellTime(self.data.KeyEvents);
+      self.flight_time_one          = self.calculateFlightTimeOne(self.orderedEvents);
+      self.flight_time_two          = self.calculateFlightTimeTwo(self.orderedEvents);
+      self.flight_time_three        = self.calculateFlightTimeThree(self.orderedEvents);
+      self.flight_time_four         = self.calculateFlightTimeFour(self.orderedEvents);
+      self.dwell_time_total         = self.mergeDwell(self.dwell_time, self.dwell_time_total);
+      self.flight_time_one_total    = self.merge(self.flight_time_one, self.flight_time_one_total);
+      self.flight_time_two_total    = self.merge(self.flight_time_two, self.flight_time_two_total);
+      self.flight_time_three_total  = self.merge(self.flight_time_three, self.flight_time_three_total);
+      self.flight_time_four_total   = self.merge(self.flight_time_four, self.flight_time_four_total);
 
       var newDir = self.data.Username;
       fs.exists('./results/' + self.data.Username, function (exists) {
@@ -188,11 +185,11 @@ function jr_keystroke_analyzer() {
 
     this.writeFiles = function (newDir) {
 
-      var dwelltime = json2csv(self.convertToCSVDwell(self.dwell_time));
-      var flight_time_one = json2csv(self.convertToCSVFlight(self.flight_time_one));
-      var flight_time_two = json2csv(self.convertToCSVFlight(self.flight_time_two));
-      var flight_time_three = json2csv(self.convertToCSVFlight(self.flight_time_three));
-      var flight_time_four = json2csv(self.convertToCSVFlight(self.flight_time_four));
+      var dwelltime           = json2csv(self.convertToCSVDwell(self.dwell_time));
+      var flight_time_one     = json2csv(self.convertToCSVFlight(self.flight_time_one));
+      var flight_time_two     = json2csv(self.convertToCSVFlight(self.flight_time_two));
+      var flight_time_three   = json2csv(self.convertToCSVFlight(self.flight_time_three));
+      var flight_time_four    = json2csv(self.convertToCSVFlight(self.flight_time_four));
 
       fs.writeFile('./results/' + newDir + '/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
         if (err) throw err;
@@ -247,23 +244,22 @@ function jr_keystroke_analyzer() {
         str += '"' + data[i].Key + '": [],';
       }
 
-      str = str.slice(0, -1);
-      str += '}';
-      result = JSON.parse(str);
-
+      str         = str.slice(0, -1);
+      str        += '}';
+      result      = JSON.parse(str);
       var keyTemp = [];
-      var temp = [];
+      var temp    = [];
 
-      for (var k = data.length - 1; k >= 0; k--) {
+      for (var k  = data.length - 1; k >= 0; k--) {
         var index = keyTemp.indexOf(data[k].KeyCode);
 
         if (index != -1) {
-          var dwelltime = temp[index].Timestamp - data[k].Timestamp;
+          var dwelltime   = temp[index].Timestamp - data[k].Timestamp;
           var PressValues = [
             {
-              "Press": data[k].Timestamp,
-              "Release": temp[index].Timestamp,
-              "allData": [data[k], data[index]]
+              "Press"   : data[k].Timestamp,
+              "Release" : temp[index].Timestamp,
+              "allData" : [data[k], data[index]]
             }
           ];
 
@@ -373,31 +369,40 @@ function jr_keystroke_analyzer() {
      * @return {JSON}      JSON object of DwellTime per Key *
      ********************************************************/
     this.calculateDwellTime = function (data) {
-      var result = {}
-      var str = '{'
+      var result  = {}
+      var str     = '{'
 
       for (var i = 0; i < data.length; i++) {
+
         str += '"' + data[i].Key + '": [],';
+
       }
 
-      str = str.slice(0, -1);
-      str += '}';
-      result = JSON.parse(str);
+      str         = str.slice(0, -1);
+      str        += '}';
+      result      = JSON.parse(str);
 
       var keyTemp = [];
-      var temp = [];
+      var temp    = [];
 
       for (var k = data.length - 1; k >= 0; k--) {
+
         var index = keyTemp.indexOf(data[k].KeyCode);
 
         if (index != -1) {
+
           var dwelltime = temp[index].Timestamp - data[k].Timestamp;
           result[data[k].Key].push(dwelltime)
           temp.splice(index, 1);
           keyTemp.splice(index, 1);
-        } else {
+
+        } 
+        
+        else {
+
           keyTemp.push(data[k].KeyCode);
           temp.push(data[k]);
+
         }
       }
       return result;
@@ -414,15 +419,23 @@ function jr_keystroke_analyzer() {
       var result = {};
 
       for (var i = 0; i < obj.length - 1; i++) {
-        var flight_time = obj[i + 1].Press - obj[i].Release;
-        var from_key = obj[i].allData[0].Key;
-        var to_key = obj[i + 1].allData[0].Key;
-        var both_keys = from_key + to_key;
+
+        var flight_time   = obj[i + 1].Press - obj[i].Release;
+        var from_key      = obj[i].allData[0].Key;
+        var to_key        = obj[i + 1].allData[0].Key;
+        var both_keys     = from_key + to_key;
+
         if (result.hasOwnProperty(both_keys)) {
+
           result[both_keys].FlightTime.push(flight_time);
-        } else {
-          var temp = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
+
+        } 
+        
+        else {
+
+          var temp          = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
           result[both_keys] = temp;
+
         }
       }
       return result;
@@ -438,15 +451,22 @@ function jr_keystroke_analyzer() {
       var result = {};
 
       for (var i = 0; i < obj.length - 1; i++) {
-        var flight_time = obj[i + 1].Release - obj[i].Release;
-        var from_key = obj[i].allData[0].Key;
-        var to_key = obj[i + 1].allData[0].Key;
-        var both_keys = from_key + to_key;
+
+        var flight_time   = obj[i + 1].Release - obj[i].Release;
+        var from_key      = obj[i].allData[0].Key;
+        var to_key        = obj[i + 1].allData[0].Key;
+        var both_keys     = from_key + to_key;
+
         if (result.hasOwnProperty(both_keys)) {
+
           result[both_keys].FlightTime.push(flight_time);
-        } else {
-          var temp = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
+
+        }
+        else {
+
+          var temp          = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
           result[both_keys] = temp;
+
         }
       }
       return result;
@@ -462,15 +482,22 @@ function jr_keystroke_analyzer() {
       var result = {};
 
       for (var i = 0; i < obj.length - 1; i++) {
-        var flight_time = obj[i + 1].Press - obj[i].Press;
-        var from_key = obj[i].allData[0].Key;
-        var to_key = obj[i + 1].allData[0].Key;
-        var both_keys = from_key + to_key;
+
+        var flight_time   = obj[i + 1].Press - obj[i].Press;
+        var from_key      = obj[i].allData[0].Key;
+        var to_key        = obj[i + 1].allData[0].Key;
+        var both_keys     = from_key + to_key;
+
         if (result.hasOwnProperty(both_keys)) {
+
           result[both_keys].FlightTime.push(flight_time);
-        } else {
-          var temp = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
+
+        } 
+        else {
+
+          var temp          = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
           result[both_keys] = temp;
+
         }
       }
       return result;
@@ -486,15 +513,21 @@ function jr_keystroke_analyzer() {
       var result = {};
 
       for (var i = 0; i < obj.length - 1; i++) {
-        var flight_time = obj[i + 1].Release - obj[i].Press;
-        var from_key = obj[i].allData[0].Key;
-        var to_key = obj[i + 1].allData[0].Key;
-        var both_keys = from_key + to_key;
+
+        var flight_time     = obj[i + 1].Release - obj[i].Press;
+        var from_key        = obj[i].allData[0].Key;
+        var to_key          = obj[i + 1].allData[0].Key;
+        var both_keys       = from_key + to_key;
+
         if (result.hasOwnProperty(both_keys)) {
+
           result[both_keys].FlightTime.push(flight_time);
-        } else {
-          var temp = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
+        } 
+        else {
+
+          var temp          = { "From": from_key, "To": to_key, "FlightTime": [flight_time] };
           result[both_keys] = temp;
+
         }
       }
       return result;
