@@ -91,34 +91,35 @@ function jr_keystroke_analyzer() {
       self.parse(objs);
     }
 
-    var dwelltime = json2csv(self.convertToCSVDwell(self.dwell_time_total));
-    var flight_time_one = json2csv(self.convertToCSVFlight(self.flight_time_one_total));
-    var flight_time_two = json2csv(self.convertToCSVFlight(self.flight_time_two_total));
+    var dwelltime         = json2csv(self.convertToCSVDwell(self.dwell_time_total));
+    var flight_time_one   = json2csv(self.convertToCSVFlight(self.flight_time_one_total));
+    var flight_time_two   = json2csv(self.convertToCSVFlight(self.flight_time_two_total));
     var flight_time_three = json2csv(self.convertToCSVFlight(self.flight_time_three_total));
-    var flight_time_four = json2csv(self.convertToCSVFlight(self.flight_time_four_total));
-    fs.exists(`../${self.data.Username}/master`,  function(bool) {
+    var flight_time_four  = json2csv(self.convertToCSVFlight(self.flight_time_four_total));
+
+    fs.exists(`./results/${self.data.Username}/master`,  function(bool) {
       if (!bool) {
-        fs.mkdir('../' + self.data.Username + '/master');
+        fs.mkdir('./results/' + self.data.Username + '/master');
       }
     })
 
-    fs.writeFile('../' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
+    fs.writeFile('./results/' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
       if (err) throw err;
     });
 
-    fs.writeFile('../' + self.data.Username + '/master/flight-time-1-' + self.data._id + '.csv', flight_time_one, function (err) {
+    fs.writeFile('./results/' + self.data.Username + '/master/flight-time-1-' + self.data._id + '.csv', flight_time_one, function (err) {
       if (err) throw err;
     });
 
-    fs.writeFile('../' + self.data.Username + '/master/flight-time-2-' + self.data._id + '.csv', flight_time_two, function (err) {
+    fs.writeFile('./results/' + self.data.Username + '/master/flight-time-2-' + self.data._id + '.csv', flight_time_two, function (err) {
       if (err) throw err;
     });
 
-    fs.writeFile('../' + self.data.Username + '/master/flight-time-3-' + self.data._id + '.csv', flight_time_three, function (err) {
+    fs.writeFile('./results/' + self.data.Username + '/master/flight-time-3-' + self.data._id + '.csv', flight_time_three, function (err) {
       if (err) throw err;
     });
 
-    fs.writeFile('../' + self.data.Username + '/master/flight-time-4-' + self.data._id + '.csv', flight_time_four, function (err) {
+    fs.writeFile('./results/' + self.data.Username + '/master/flight-time-4-' + self.data._id + '.csv', flight_time_four, function (err) {
       if (err) throw err;
     });
 
@@ -151,11 +152,11 @@ function jr_keystroke_analyzer() {
       self.flight_time_four_total = self.merge(self.flight_time_four, self.flight_time_four_total);
 
       var newDir = self.data.Username;
-      fs.exists('../' + self.data.Username, function (exists) {
+      fs.exists('./results/' + self.data.Username, function (exists) {
         if (exists) {
           self.writeFiles(newDir);
         } else {
-          fs.mkdir('../' + newDir);
+          fs.mkdir('./results/' + newDir);
           self.writeFiles(newDir);
         }
       });
@@ -193,23 +194,23 @@ function jr_keystroke_analyzer() {
       var flight_time_three = json2csv(self.convertToCSVFlight(self.flight_time_three));
       var flight_time_four = json2csv(self.convertToCSVFlight(self.flight_time_four));
 
-      fs.writeFile('../' + newDir + '/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
+      fs.writeFile('./results/' + newDir + '/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
         if (err) throw err;
       });
 
-      fs.writeFile('../' + newDir + '/flight-time-1-' + self.data._id + '.csv', flight_time_one, function (err) {
+      fs.writeFile('./results/' + newDir + '/flight-time-1-' + self.data._id + '.csv', flight_time_one, function (err) {
         if (err) throw err;
       });
 
-      fs.writeFile('../' + newDir + '/flight-time-2-' + self.data._id + '.csv', flight_time_two, function (err) {
+      fs.writeFile('./results/' + newDir + '/flight-time-2-' + self.data._id + '.csv', flight_time_two, function (err) {
         if (err) throw err;
       });
 
-      fs.writeFile('../' + newDir + '/flight-time-3-' + self.data._id + '.csv', flight_time_three, function (err) {
+      fs.writeFile('./results/' + newDir + '/flight-time-3-' + self.data._id + '.csv', flight_time_three, function (err) {
         if (err) throw err;
       });
 
-      fs.writeFile('../' + newDir + '/flight-time-4-' + self.data._id + '.csv', flight_time_four, function (err) {
+      fs.writeFile('./results/' + newDir + '/flight-time-4-' + self.data._id + '.csv', flight_time_four, function (err) {
         if (err) throw err;
       });
     },
