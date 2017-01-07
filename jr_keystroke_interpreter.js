@@ -80,16 +80,23 @@ function jr_keystroke_analyzer() {
   this.flight_time_three_total  = {};
   this.flight_time_four_total   = {};
 
-  /*********************************************************************
-   * Default Constructer ran at on file upload (Testing Purposes only) *
-   * @param  {input} evt  The file input DOMElement                    *
-   * @return {void}       void;                                        *
-   *********************************************************************/
+  /************************************************************************
+   * Organizer for All parsing and link to csv conver and master analysis *
+   * @param  {Array} data  An array of JSON KeyStroke Data Files          *
+   * @return {void}       void;                                           *
+   ************************************************************************/
   this.init = function (data) {
     for (objs in data) {
       self.data = data[objs];
       self.parse(objs);
     }
+
+
+    //Master Analysis goes here
+
+
+
+
 
     var dwelltime         = json2csv(self.convertToCSVDwell(self.dwell_time_total));
     var flight_time_one   = json2csv(self.convertToCSVFlight(self.flight_time_one_total));
@@ -148,17 +155,16 @@ function jr_keystroke_analyzer() {
       self.flight_time_three_total  = self.merge(self.flight_time_three, self.flight_time_three_total);
       self.flight_time_four_total   = self.merge(self.flight_time_four, self.flight_time_four_total);
 
-      var newDir = self.data.Username;
-      fs.exists('./results/' + self.data.Username, function (exists) {
-        if (exists) {
-          self.writeFiles(newDir);
-        } else {
-          fs.mkdir('./results/' + newDir);
-          self.writeFiles(newDir);
-        }
-      });
+      self.checkDirectory()
     },
 
+    /************************************************
+     * Merges Dwell Time data from the current doc  *
+     * to the total user dwell time data            *
+     * @param  {JSON} newData new DT Data           *
+     * @param  {JSON} oldData old DT Data           *
+     * @return {JSON} updataed old DT Data          *
+     ************************************************/
     this.mergeDwell = function (newData, oldData) {
       for (obj in newData) {
         if (oldData[obj]) {
@@ -171,6 +177,13 @@ function jr_keystroke_analyzer() {
       return oldData;
     },
 
+    /************************************************
+     * Merges Flight Time data from the current doc *
+     * to the total user Flight time data           *
+     * @param  {JSON} newData new FT Data           *
+     * @param  {JSON} oldData old FT Data           *
+     * @return {JSON} updataed old FT Data          *
+     ************************************************/
     this.merge = function (newData, oldData) {
       for (obj in newData) {
         if (oldData[obj]) {
@@ -181,8 +194,30 @@ function jr_keystroke_analyzer() {
         }
       }
       return oldData;
-    }
+    },
 
+    /************************************************
+     * Checks to see if the new directory for       *
+     * writing files exists, if not, creates dir    *
+     * @return {void} void                          *
+     ************************************************/
+    this.checkDirectory = function () {
+      var newDir = self.data.Username;
+      fs.exists('./results/' + self.data.Username, function (exists) {
+        if (exists) {
+          self.writeFiles(newDir);
+        } else {
+          fs.mkdir('./results/' + newDir);
+          self.writeFiles(newDir);
+        }
+      });
+    },
+
+    /************************************************
+     * writes CSV files to new directory            *
+     * @param  {String} newDir dir to write files   *
+     * @return {void} void                          *
+     ************************************************/
     this.writeFiles = function (newDir) {
 
       var dwelltime           = json2csv(self.convertToCSVDwell(self.dwell_time));
