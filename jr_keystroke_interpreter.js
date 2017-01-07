@@ -92,7 +92,7 @@ function jr_keystroke_analyzer() {
     }
 
 
-    //Master Analysis goes here
+    self.mainAnalysis();
 
 
 
@@ -576,5 +576,14 @@ function jr_keystroke_analyzer() {
 
     this.calculateNGraph = function (obj) {
       console.log('calculate n-graph here')
+    },
+
+
+
+
+
+    this.mainAnalysis = function () {
+      console.log(self.dwell_time_total);
+      console.log(self.flight_time_one_total);
     }
 }
