@@ -23,7 +23,7 @@ Mongo.MongoClient.connect(url, function (err, db) {
 
   getCollectionNames(db, function (docs) {
     for (coll in docs) {
-      if (docs[coll].ns != 'keystroke-data.users' && docs[coll].ns != 'keystroke-data.objectlabs-system' && docs[coll].ns != 'keystroke-data.objectlabs-system.admin.collections' && docs[coll].ns != 'keystroke-data.to-process') {
+      if (docs[coll].ns != 'keystroke-data.users' && docs[coll].ns != 'keystroke-data.objectlabs-system' && docs[coll].ns != 'keystroke-data.objectlabs-system.admin.collections' && docs[coll].ns != 'keystroke-data.to-process' && docs[coll].ns != 'keystroke-data.medians') {
 
         var str = docs[coll].ns.substring(15);
         getDocuments(db, str, function (documents) {
@@ -36,6 +36,7 @@ Mongo.MongoClient.connect(url, function (err, db) {
         });
       }
     }
+    console.log('Connection Closed');
     db.close();
   });
 
@@ -92,23 +93,17 @@ function jr_keystroke_analyzer() {
     }
 
 
-    //Master Analysis goes here
-
-
-
-
+    self.mainAnalysis();
 
     var dwelltime         = json2csv(self.convertToCSVDwell(self.dwell_time_total));
     var flight_time_one   = json2csv(self.convertToCSVFlight(self.flight_time_one_total));
     var flight_time_two   = json2csv(self.convertToCSVFlight(self.flight_time_two_total));
     var flight_time_three = json2csv(self.convertToCSVFlight(self.flight_time_three_total));
     var flight_time_four  = json2csv(self.convertToCSVFlight(self.flight_time_four_total));
-
-    fs.exists(`./results/${self.data.Username}/master`,  function(bool) {
+    var bool = fs.existsSync(`./results/${self.data.Username}/master`)
       if (!bool) {
-        fs.mkdir('./results/' + self.data.Username + '/master');
+        fs.mkdirSync('./results/' + self.data.Username + '/master');
       }
-    })
 
     fs.writeFile('./results/' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
       if (err) throw err;
@@ -203,14 +198,13 @@ function jr_keystroke_analyzer() {
      ************************************************/
     this.checkDirectory = function () {
       var newDir = self.data.Username;
-      fs.exists('./results/' + self.data.Username, function (exists) {
+      var exists = fs.existsSync('./results/' + self.data.Username)
         if (exists) {
           self.writeFiles(newDir);
         } else {
-          fs.mkdir('./results/' + newDir);
+          fs.mkdirSync('./results/' + newDir);
           self.writeFiles(newDir);
         }
-      });
     },
 
     /************************************************
@@ -381,15 +375,16 @@ function jr_keystroke_analyzer() {
           var temp = {};
           var bool = false;
           for (var k = 0; k < csv.data.length; k++) {
-            if (csv.data[k].hasOwnProperty(prop)) { } else {
-              var newProp = "From '" + obj[prop].From + "' To '" + obj[prop].To + "'";
+            var newProp = `From '${obj[prop].From}' To '${obj[prop].To}'`;
+            if (csv.data[k].hasOwnProperty(newProp)) { } else {
+              var newProp = `From '${obj[prop].From}' To '${obj[prop].To}'`;
               csv.data[k][newProp] = obj[prop].FlightTime[i];
               bool = true;
               break;
             }
           }
           if (!bool) {
-            var newProp = "From '" + obj[prop].From + "' To '" + obj[prop].To + "'";
+            var newProp = `From '${obj[prop].From}' To '${obj[prop].To}'`;
             temp[newProp] = obj[prop].FlightTime[i];
             csv.data.push(temp);
           }
@@ -576,5 +571,130 @@ function jr_keystroke_analyzer() {
 
     this.calculateNGraph = function (obj) {
       console.log('calculate n-graph here')
+    },
+
+
+
+
+
+    this.mainAnalysis = function () {
+
+      var DT_M  = calculateMedianDT(self.dwell_time_total);
+      var FT1_M = calculateMedianFT(self.flight_time_one_total);
+      var FT2_M = calculateMedianFT(self.flight_time_two_total);
+      var FT3_M = calculateMedianFT(self.flight_time_three_total);
+      var FT4_M = calculateMedianFT(self.flight_time_four_total);
+      
+      uploadToMongo();
+
+      function calculateMedianDT(obj) {
+        var result = {};
+        for (item in obj) {
+          result[item] = getMedian(obj[item]);
+        }
+        return result
+      }
+
+      function calculateMedianFT(obj) {
+        var result = {};
+        for (item in obj) {
+          result[item] = getMedian(obj[item].FlightTime);
+        }
+        return result
+      }
+
+      function getMedian(values) {
+        values.sort((a, b) => a - b);
+        let lowMiddle = Math.floor((values.length - 1) / 2);
+        let highMiddle = Math.ceil((values.length - 1) / 2);
+        let median = (values[lowMiddle] + values[highMiddle]) / 2;
+        return median
+      }
+
+      function uploadToMongo() {
+
+        DT_M = prettyMongo(DT_M);
+        FT1_M = prettyMongo(FT1_M);
+        FT2_M = prettyMongo(FT2_M);
+        FT3_M = prettyMongo(FT3_M);
+        FT4_M = prettyMongo(FT4_M);
+
+        Mongo.MongoClient.connect(url, function (err, db) {
+          assert.equal(null, err);
+
+          console.log("Connected successfully to server");
+
+          var collection = db.collection('medians');
+          var str = self.data.Username;
+          collection.find({ "_id": str }).toArray(function (err, docs) {
+            assert.equal(err, null);
+            if (docs.length == 0) {
+              collection.insertOne(
+                {
+                  "_id": str,
+                  "DT": DT_M,
+                  "FT1": FT1_M,
+                  "FT2": FT2_M,
+                  "FT3": FT3_M,
+                  "FT4": FT4_M,
+
+                }, function (err, result) {
+                  assert.equal(err, null);
+                  console.log("Inserted a document into the Medians collection.");
+                });
+              console.log('Connection Closed');
+              db.close();
+            }
+
+            else {
+              collection.updateOne(
+                { "_id": str },
+                { $set: {
+                  "DT": DT_M,
+                  "FT1": FT1_M,
+                  "FT2": FT2_M,
+                  "FT3": FT3_M,
+                  "FT4": FT4_M,
+                }
+                
+
+                }, function (err, result) {
+                  assert.equal(err, null);
+                  console.log("Inserted a document into the Medians collection.");
+                });
+              console.log('Connection Closed');
+              db.close();
+            }
+
+          });
+        });
+
+
+          function prettyMongo(obj) {
+            for (values in obj) {
+              if (values.indexOf('.') != -1) {
+                var newValues = values.replace(/\./g, 'period');
+                obj[newValues] = obj[values];
+                delete obj[values];
+              }
+            }
+            return obj;
+          }
+      }
+      /*
+      {
+        a: [123, 12, 321],
+        b: [111, 123, 112],
+        ...
+      }
+      */
+
+      /*
+      {
+        ab: { From: a, To: b, FlightTime: [123,121,111]},
+        a1: { From: a, To: b, FlightTime: [111,222,333]},
+        ...
+      }
+       */
     }
 }

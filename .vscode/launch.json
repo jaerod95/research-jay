@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}\\process/jr_keystroke_interpreter.js",
+            "program": "${workspaceRoot}\\jr_keystroke_interpreter.js",
             "cwd": "${workspaceRoot}"
         },
         {
