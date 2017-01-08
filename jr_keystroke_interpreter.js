@@ -11,7 +11,6 @@ const fs        = require('fs');
 const json2csv  = require('json2csv');
 const Mongo     = require('mongodb');
 const assert    = require('assert');
-const _         = require('lodash');
 
 // Connection URL
 var url = 'mongodb://jrod95:jay-research@ds151108.mlab.com:51108/keystroke-data';
