@@ -4,7 +4,8 @@ console.log('Work.js Initiated')
  * @type {Object}                             *
  **********************************************/
 var jr_key = {
-  number_of_keystrokes: 200,
+  number_of_collection_keystrokes: 200,
+  number_of_validation_keystrokes: 20,
   keystrokeCount  : 0,
   apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
   URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
@@ -25,6 +26,9 @@ var jr_key = {
                       ],
                       "EndTimestamp"      : null
                     },
+    validation    : false,
+
+
 
   /**********************************************
    * Uploads the data to the mongoDB Database   *
@@ -100,14 +104,18 @@ self.addEventListener('message', function (e) {
 
       jr_key.data._id = Date.now()
         + '-'
-        + btoa(e.data[1][0])
+        + btoa(e.data[1].keystroke_login_name)
         + '-'
-        + btoa(e.data[1][1]);
+        + btoa(e.data[1].keystroke_login_username);
       jr_key.data.ActingUsername = e.data[1].keystroke_login_name;
       jr_key.data.Username = e.data[1].keystroke_login_username;
 
       jr_key.data.StartTimestamp = Date.now();
       jr_key.data.Target = e.data[1][2];
+
+      if (e.data[1].keystroke_login_name != e.data[1].keystroke_login_username) {
+        jr_key.validation = true;
+      }
 
       self.postMessage(['runAnalysis']);
       break;
@@ -116,7 +124,8 @@ self.addEventListener('message', function (e) {
      * Gathers the keystroke data and pushes it to the data node  *
      **************************************************************/
     case 'key':
-      if (jr_key.keystrokeCount >= jr_key.number_of_keystrokes) { //This is the real data capture value
+      if (jr_key.keystrokeCount >= jr_key.number_of_collection_keystrokes && !jr_key.validation) { //This is the real data capture value
+
         jr_key.uploadData();
 
         jr_key.data._id = Date.now()
@@ -128,6 +137,12 @@ self.addEventListener('message', function (e) {
       jr_key.data.StartTimestamp = Date.now();
       jr_key.data.KeyEvents = [];
       jr_key.keystrokeCount = 0;
+      }
+      if (jr_key.keystrokeCount >= jr_key.number_of_validation_keystrokes && jr_key.validation) {
+        self.postMessage(['data', jr_key.data]);
+        self.postMessage(['authenticate']);
+        jr_key.keystrokeCount = 0;
+        jr_key.number_of_validation_keystrokes = 50;
       }
       var keystroke_obj = {
 

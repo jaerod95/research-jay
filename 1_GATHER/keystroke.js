@@ -15,6 +15,7 @@ var jr_key  = {
   URL       : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
   users     : undefined,
   w         : null,
+  a         : null,
 
   /*********************************************************
    * Creates the login bar at the top of the html document *
@@ -27,11 +28,8 @@ var jr_key  = {
     console.log('This is where I will put an intro text to the document')
 
     var loginDiv = document.createElement('div');
-
     loginDiv.id = "keystroke_gather_login";
-
     loginDiv.style = `width: 100%; height: 25px; display: flex; justify-content: space-between;`;
-
     loginDiv.innerHTML = `
     Acting Username
     <div style="display:flex; flex-direction: column;">
@@ -47,8 +45,8 @@ var jr_key  = {
     </div>
     <input type="submit" name="keystoke_login" id="keystroke_gather_login_submit" onclick="jr_key.login()">
      `;
-
     document.body.insertBefore(loginDiv, document.body.firstChild);
+
 
     document.getElementById('keystroke_username').addEventListener('keydown', function (evt) {
       if (evt.keyCode == 13) {
@@ -76,6 +74,11 @@ var jr_key  = {
         case 'data':
 
           jr_key.data = e.data[1];
+          break;
+
+        case 'authenticate':
+
+          jr_key.a.postMessage(['authenticate', jr_key.data]);
           break;
 
         case 'console':
@@ -140,9 +143,6 @@ var jr_key  = {
 
         var err1, err2 = false;
 
-        var res  = jr_key.users.find(function (e) { return e == keystroke_login_name })
-        var res2 = jr_key.users.find(function (e) { return e == keystroke_login_username })
-
         if (!jr_key.users.find(function (e) { return e == keystroke_login_name })) {
           err1 = true;
           document.getElementById('keystroke_error_message_username').innerHTML = 'Incorrect Acting Name'
@@ -184,14 +184,16 @@ var jr_key  = {
 }
 document.addEventListener('DOMContentLoaded', jr_key.init);
 
-var blob = new Blob([
-`console.log('Work.js Initiated')
+
+var workjs = new Blob([
+  `console.log('Work.js Initiated')
 /**********************************************
  * Variable object to non-globalize functions *
  * @type {Object}                             *
  **********************************************/
 var jr_key = {
-  number_of_keystrokes: 200,
+  number_of_collection_keystrokes: 200,
+  number_of_validation_keystrokes: 20,
   keystrokeCount  : 0,
   apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
   URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
@@ -212,6 +214,9 @@ var jr_key = {
                       ],
                       "EndTimestamp"      : null
                     },
+    validation    : false,
+
+
 
   /**********************************************
    * Uploads the data to the mongoDB Database   *
@@ -287,14 +292,18 @@ self.addEventListener('message', function (e) {
 
       jr_key.data._id = Date.now()
         + '-'
-        + btoa(e.data[1][0])
+        + btoa(e.data[1].keystroke_login_name)
         + '-'
-        + btoa(e.data[1][1]);
+        + btoa(e.data[1].keystroke_login_username);
       jr_key.data.ActingUsername = e.data[1].keystroke_login_name;
       jr_key.data.Username = e.data[1].keystroke_login_username;
 
       jr_key.data.StartTimestamp = Date.now();
       jr_key.data.Target = e.data[1][2];
+
+      if (e.data[1].keystroke_login_name != e.data[1].keystroke_login_username) {
+        jr_key.validation = true;
+      }
 
       self.postMessage(['runAnalysis']);
       break;
@@ -303,7 +312,8 @@ self.addEventListener('message', function (e) {
      * Gathers the keystroke data and pushes it to the data node  *
      **************************************************************/
     case 'key':
-      if (jr_key.keystrokeCount >= jr_key.number_of_keystrokes) { //This is the real data capture value
+      if (jr_key.keystrokeCount >= jr_key.number_of_collection_keystrokes && !jr_key.validation) { //This is the real data capture value
+
         jr_key.uploadData();
 
         jr_key.data._id = Date.now()
@@ -315,6 +325,12 @@ self.addEventListener('message', function (e) {
       jr_key.data.StartTimestamp = Date.now();
       jr_key.data.KeyEvents = [];
       jr_key.keystrokeCount = 0;
+      }
+      if (jr_key.keystrokeCount >= jr_key.number_of_validation_keystrokes && jr_key.validation) {
+        self.postMessage(['data', jr_key.data]);
+        self.postMessage(['authenticate']);
+        jr_key.keystrokeCount = 0;
+        jr_key.number_of_validation_keystrokes = 50;
       }
       var keystroke_obj = {
 
@@ -333,7 +349,105 @@ self.addEventListener('message', function (e) {
   }
 });`]);
 
-// Obtain a blob URL reference to our worker 'file'.
-var blobURL = window.URL.createObjectURL(blob);
+var authenticatejs = new Blob([
+`console.log('Authenticate.js initiated');
 
-jr_key.w = new Worker(blobURL);
+var jr_a_key = {
+    test_against_data       : undefined,
+    test_against_analytics  : undefined,
+    real_user_analytics     : undefined,
+    apiKey          : 'nt-qNa0ZdNPonR-ocAUj8A4R1A-hLLL-',
+    URL             : 'https://api.mlab.com/api/1/databases/keystroke-data/collections/',
+
+    /*************************************************************
+     * Sends an http request to the url with the determined type *
+     * @param {String} TYPE                                      *
+     * @param {String} URL                                       *
+     * @returns XMLHttpRequestResult                             * 
+     *************************************************************/
+  sendRequest: function (TYPE, URL) {
+
+    var getData = new XMLHttpRequest();
+
+    getData.open(TYPE, URL);
+
+    getData.setRequestHeader('Content-Type', 'application/json');
+
+    getData.send();
+
+    return getData;
+  },
+
+  getTestAnalytics: function() {
+      console.log('get Test Analytics ran!')
+  },
+
+  authenticate: function() {
+      var validData = setInterval(valid, 10);
+
+      function valid() {
+          if (!jr_a_key.test_against_analytics) {
+              console.log('waiting on analytics');
+            return;   
+          }
+          else {
+              clearInterval(validData);
+              console.log(jr_a_key)
+          }
+      }
+  }
+}
+
+self.addEventListener('message', function (e) {
+
+    switch (e.data[0]) {
+        case 'authenticate':
+            jr_a_key.test_against_data = e.data[1];
+            jr_a_key.getTestAnalytics();
+
+
+            if (!jr_a_key.real_user_analytics) {
+
+                var response = jr_a_key.sendRequest('GET', jr_a_key.URL + 'medians?apiKey=' + jr_a_key.apiKey + '&q={"_id": "' + jr_a_key.test_against_data.Username + '"}');
+                var getResults = setInterval(results, 10);
+
+                function results() {
+                    if (!response.responseText) {
+                        console.log('waiting on results')
+                        return;
+                    }
+
+                    else {
+                        clearInterval(getResults);
+                        var processResults = setInterval(parse, 10);
+                        function parse() {
+                            var bool = false;
+                            try {
+                                jr_a_key.real_user_analytics = JSON.parse(response.responseText);
+                                jr_a_key.authenticate()
+                                bool = true;
+                            }
+                            catch (e) {
+                            }
+                            if (bool) {
+                                clearInterval(processResults);
+                            }
+                            return;
+                        }
+                    }
+                }
+
+            }
+
+
+            break;
+
+    }
+});`
+])
+
+// Obtain a blob URL reference to our worker 'file'.
+var workjsURL         = window.URL.createObjectURL(workjs);
+var authenticatejsURL = window.URL.createObjectURL(authenticatejs);
+jr_key.w              = new Worker(workjsURL);
+jr_key.a              = new Worker(authenticatejsURL);

@@ -102,6 +102,12 @@ function jr_keystroke_analyzer() {
         fs.mkdirSync('./results/' + self.data.Username + '/master');
       }
 
+      function WriteFile(data) {
+        fs.writeFile('./results/' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
+          if (err) throw err;
+        });
+      }
+
     fs.writeFile('./results/' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
       if (err) throw err;
     });
