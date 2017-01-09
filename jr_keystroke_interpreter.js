@@ -1,11 +1,9 @@
 //////////////////////////////////////////////////////////////
 //  TODO:                                                   //
-// 1. Redo the parse to work with the array of objects.                             //
-// 2.       //
-//                           //
-//  //
-//                 //
-//                    //
+// 1. Develop Test Cases                                    //
+// 2. Format Code                                           //
+// 3. Create a real-time authenticator                      //
+// 4. Create documentation of the tool                      //
 //////////////////////////////////////////////////////////////
 const fs        = require('fs');
 const json2csv  = require('json2csv');

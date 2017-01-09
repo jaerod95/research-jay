@@ -1,3 +1,8 @@
+/**********************************************************************
+*	TODO:										                                            *
+* 1. Create a run time authentication program in work.js              *
+* 2. Add a case where the usernames are the same                      *
+**********************************************************************/
 
 /**********************************************
  * Variable object to non-globalize functions *
@@ -180,13 +185,7 @@ var jr_key  = {
 document.addEventListener('DOMContentLoaded', jr_key.init);
 
 var blob = new Blob([
-`/**
- * TO DO
- * 1.need to finish the create user part
- * 2. need to reset all the upload data info
- * 3. need to create a collection for how many data types in each section since last process.
- */
-console.log('Work.js Initiated')
+`console.log('Work.js Initiated')
 /**********************************************
  * Variable object to non-globalize functions *
  * @type {Object}                             *
@@ -238,48 +237,17 @@ var jr_key = {
 
         clearInterval(getResults2);
 
-        if (sendData.status == 200 || sendData.status == 201) {
-
+        if (sendData.status == 200 || sendData.status == 201)
           console.log('Upload Ended')
-          var registerSend = jr_key.sendRequest('POST', jr_key.URL + 'to-process?apiKey=' + jr_key.apiKey, JSON.stringify({"_id" : DATA._id}));
-          var getResults1 = setInterval(results1, 100);
-
-          function results1() {
-
-            if (!registerSend.responseText) {
-              return
-            }
-
-            else {
-
-              clearInterval(getResults1);
-
-              if (registerSend.status == 200 || registerSend.status == 201) {
-
-                console.log('to-process uploaded');
-
-              } 
-              
-              else {
-
-                console.error(registerSend.status)
-                console.log('there was an error with updating the to process database');
-
-              }
-            }
-          }
-        }
 
         else {
 
-          console.log(sendData.status);
-          console.log(sendData.responseText);
-          console.log('Second Upload Failed')
+          console.error(registerSend.status)
+          console.log('there was an error with updating the to process database');
 
         }
       }
     }
-
   },
 
   /*************************************************************
