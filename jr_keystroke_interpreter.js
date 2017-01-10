@@ -102,12 +102,6 @@ function jr_keystroke_analyzer() {
         fs.mkdirSync('./results/' + self.data.Username + '/master');
       }
 
-      function WriteFile(data) {
-        fs.writeFile('./results/' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
-          if (err) throw err;
-        });
-      }
-
     fs.writeFile('./results/' + self.data.Username + '/master/dwell-time-' + self.data._id + '.csv', dwelltime, function (err) {
       if (err) throw err;
     });
@@ -576,10 +570,6 @@ function jr_keystroke_analyzer() {
       console.log('calculate n-graph here')
     },
 
-
-
-
-
     this.mainAnalysis = function () {
 
       var DT_M  = calculateMedianDT(self.dwell_time_total);
@@ -684,20 +674,5 @@ function jr_keystroke_analyzer() {
             return obj;
           }
       }
-      /*
-      {
-        a: [123, 12, 321],
-        b: [111, 123, 112],
-        ...
-      }
-      */
-
-      /*
-      {
-        ab: { From: a, To: b, FlightTime: [123,121,111]},
-        a1: { From: a, To: b, FlightTime: [111,222,333]},
-        ...
-      }
-       */
     }
 }
