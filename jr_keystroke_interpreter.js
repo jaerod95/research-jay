@@ -1,17 +1,14 @@
 //////////////////////////////////////////////////////////////
 //  TODO:                                                   //
-// 1. Redo the parse to work with the array of objects.                             //
-// 2.       //
-//                           //
-//  //
-//                 //
-//                    //
+// 1. Develop Test Cases                                    //
+// 2. Format Code                                           //
+// 3. Create a real-time authenticator                      //
+// 4. Create documentation of the tool                      //
 //////////////////////////////////////////////////////////////
 const fs        = require('fs');
 const json2csv  = require('json2csv');
 const Mongo     = require('mongodb');
 const assert    = require('assert');
-const _         = require('lodash');
 
 // Connection URL
 var url = 'mongodb://jrod95:jay-research@ds151108.mlab.com:51108/keystroke-data';
@@ -573,10 +570,6 @@ function jr_keystroke_analyzer() {
       console.log('calculate n-graph here')
     },
 
-
-
-
-
     this.mainAnalysis = function () {
 
       var DT_M  = calculateMedianDT(self.dwell_time_total);
@@ -681,20 +674,5 @@ function jr_keystroke_analyzer() {
             return obj;
           }
       }
-      /*
-      {
-        a: [123, 12, 321],
-        b: [111, 123, 112],
-        ...
-      }
-      */
-
-      /*
-      {
-        ab: { From: a, To: b, FlightTime: [123,121,111]},
-        a1: { From: a, To: b, FlightTime: [111,222,333]},
-        ...
-      }
-       */
     }
 }
