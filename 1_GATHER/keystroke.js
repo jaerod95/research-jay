@@ -1,7 +1,6 @@
 /**********************************************************************
 *	TODO:										                                            *
 * 1. Create a run time authentication program in work.js              *
-* 2. Add a case where the usernames are the same                      *
 **********************************************************************/
 
 /**********************************************
@@ -96,8 +95,9 @@ var jr_key  = {
   getUsers: function () {
     var result      = jr_key.sendRequest('GET', jr_key.URL + 'users?apiKey=' + jr_key.apiKey)
     var getResults  = setInterval(results, 100);
-
+    
     function results() {
+      console.log('Waiting for Users...');
 
       if (!result.responseText) {
         return
@@ -105,6 +105,7 @@ var jr_key  = {
 
       else {
         clearInterval(getResults);
+        console.log('Got Users');
         var response = JSON.parse(result.responseText);
         jr_key.users = response[0].users;
       }

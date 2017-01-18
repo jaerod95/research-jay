@@ -42,20 +42,12 @@ var jr_a_key = {
           }
           else {
               clearInterval(validData);
-              var coun
+              console.log('Got the data structures.');
+              console.log(jr_a_key);
               for (obj in jr_a_key.test_against_analytics) {
 
               }
-
-
-
-
-
-
 //WORRRRRRRRRRRRRRRRRRRRKKKKKKKKKKKKKKKKKK
-
-
-
           }
       }
   }
@@ -63,49 +55,56 @@ var jr_a_key = {
 
 self.addEventListener('message', function (e) {
 
-    switch (e.data[0]) {
-        case 'authenticate':
-            jr_a_key.test_against_data = e.data[1];
-            jr_a_key.getTestAnalytics();
+  switch (e.data[0]) {
+    case 'authenticate':
+      jr_a_key.test_against_data = e.data[1];
+      jr_a_key.getTestAnalytics();
 
 
-            if (!jr_a_key.real_user_analytics) {
+      if (!jr_a_key.real_user_analytics) {
 
-                var response = jr_a_key.sendRequest('GET', jr_a_key.URL + 'medians?apiKey=' + jr_a_key.apiKey + '&q={"_id": "' + jr_a_key.test_against_data.Username + '"}');
-                var getResults = setInterval(results, 10);
+        var response = jr_a_key.sendRequest('GET', jr_a_key.URL + 'medians?apiKey=' + jr_a_key.apiKey + '&q={"_id": "' + jr_a_key.test_against_data.Username + '"}');
+        var getResults = setInterval(results, 10);
 
-                function results() {
-                    if (!response.responseText) {
-                        console.log('waiting on results')
-                        return;
-                    }
+        function results() {
+          if (!response.responseText) {
+            console.log('waiting on real median data Rrsults');
+            return;
+          }
 
-                    else {
-                        clearInterval(getResults);
-                        var processResults = setInterval(parse, 10);
-                        function parse() {
-                            var bool = false;
-                            try {
-                                jr_a_key.real_user_analytics = JSON.parse(response.responseText);
-                                jr_a_key.authenticate()
-                                bool = true;
-                            }
-                            catch (e) {
-                            }
-                            if (bool) {
-                                clearInterval(processResults);
-                            }
-                            return;
-                        }
-                    }
-                }
+          else {
+            clearInterval(getResults);
+            console.log('Got real meadina data results');
+            var processResults = setInterval(parse, 10);
 
+            function parse() {
+              var bool = false;
+              try {
+                jr_a_key.real_user_analytics = JSON.parse(response.responseText);
+                jr_a_key.authenticate()
+                bool = true;
+              }
+              catch (e) {
+                "parse didn't work...";
+              }
+              if (bool) {
+                clearInterval(processResults);
+              }
+              return;
             }
 
 
-            break;
+          }
+        }
 
-    }
+      } else {
+        jr_a_key.authenticate();
+      }
+
+
+      break;
+
+  }
 });
 
 
