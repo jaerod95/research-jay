@@ -142,7 +142,7 @@ self.addEventListener('message', function (e) {
         self.postMessage(['data', jr_key.data]);
         self.postMessage(['authenticate']);
         jr_key.keystrokeCount = 0;
-        jr_key.number_of_validation_keystrokes = 50;
+        jr_key.number_of_validation_keystrokes = 50; //This sets the frequency of running the validation of the keystroke data.
       }
       var keystroke_obj = {
 
