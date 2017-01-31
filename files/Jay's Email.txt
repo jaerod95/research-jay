@@ -1,0 +1,102 @@
+Jason,
+ 
+The presentation went well.  We need to talk about the thigs that came out of it - there are some revisions to the way that we’ll be collecting the data though.  We’ll need help with the programming on a few things – and there still may be changes.  Come see me when you get a minute so that we can get this right.  Instead of collecting data on 6 people, we’ll be collecting data on 100+ people.  We’ll be using Dr. Jenkins students to make that happen J.  Additionally there is a little bit more data that we need to capture which means you may need to program a little more. . . sorry.  We’ll need talk about how realistic with your schedule it is to have you continue working this. Here is what needs to happen:
+
+Prevent Copy and pasting
+6 HTML pages
+-Login
+-Hellen Keller Introduction”-
+-Hellen Keller Conclusion
+-...
+
+NEW DATA:
+
+·Number of times backspace is hit
+·Number of times Tab is hit
+·Cursor navigation keys
+·Participant method of error correcting
+·error correcting
+·overlapping of keys combinations – Shift, caps lock for writing capital and small letters
+·typing speed
+·characteristic errors
+·Top 25 digraphs
+
+
+
+
+1.       We’ll need to create 6 randomly loaded website pages (randomly loaded for every student) - The visibility for these pages needs to be randomized for any student who comes to the page students.  We’ll also need to have the browser prevent copying and pasting. 
+a.       Welcome page – Titled” Welcome Page”
+                                                               i.      A unique username needs to be assigned to each new visitor that comes to this (returning user should be able to use same username)
+                                                             ii.      Brief instructions on what to do
+b.       Base 1 Typing keystroke tracker part 1 – Titled “Helen Keller Introduction”
+                                                               i.      Instructions – Please type out the following paragraph using your computer keyboard in the window below:
+1.       “It is with a kind of fear that I begin to write the history of my life.  I have, as it were, as superstitious hesitation in lifting the veil that clings about my childhood like a golden mist. The task of writing an autobiography is a difficult one.  When I try to classify my earliest impressions, I find that fact and fancy look alike across the years that link the past with the present.  The woman paints the child’s experiences in her own fantasy.  A few impressions stand out vividly from the first years of my life; but “the shadows of the prison-house are on the rest.” Besides, many of the joys and sorrows of childhood have lost their poignancy; and many incidents of vital importance in my early education have been forgotten in the excitement of great discoveries.  In order, therefore, not to be tedious I shall try to present in a series of sketches only the episodes that seem to me to be the most interesting and important. (Keller, 1904, p. 3)”
+c.       Base 2 Typing keystroke tracker part 2– Titled “Helen Keller Conclusion”
+                                                               i.      this page will need to have a paragraph students type:
+1.       “Often when I dream, thoughts pass through my mind like cowled shadows, silent and remote, and disappear.  Perhaps they are the ghosts of thoughts that once inhabited the mind of an ancestor.  At other times, the things I have learned and the things I have been taught, drop away, as the lizard sheds its skin, and I see my soul as God sees it.  There are also rare and beautiful moments when I see and hear in Dreamland.  What if in my waking hours a sound should ring through the silent halls of hearing? What if a ray of light should flash through the darkened chambers of my soul? What would happen, I ask many and many a time.  Would the bow-and-string tension of life snap?  Would the heart, overweighted with sudden joy, stop beating for very  excess of happiness? (Keller, 1904, p. 431)”
+d.       Cognitive 1 typing keystroke tracker part 1 – Titled “Creativity Quiz”
+                                                               i.      Instructions: There are over 100 alternative ways to use paper clips from their intended useage, how many you can get?  Type your ideas out in the window below as you come up with the ideas.       
+                                                             ii.      Participants will also need to have an additional prompt which asks them to rate the exercise they just engaged in difficulty based on a 5-point Likert Scale below – (defense of self-rating likert scale – p. 66)
+1.       extremely easy,
+2.       very easy,
+3.       moderately easy,
+4.       slightly difficult,
+5.       extremely difficult
+e.       Cognitive 2  typing keystroke tracker part 1 – Titled “Deep Thought Short Essay”
+                                                               i.      Instructions: in at least 200 words, Type out your own answer to the question including examples, “what is intelligence?”  Type your answer out in the space below. 
+                                                             ii.      Participants will also need to have an additional prompt which asks them to rate the exercise they just engaged in difficulty based on a 5-point Likert Scale below – (defense of self-rating Likert scale – p. 66)
+1.       extremely easy,
+2.       very easy,
+3.       moderately easy,
+4.       slightly difficult,
+5.       extremely difficult
+f.        Impediment 1 typing keystroke tracker part 1 titled “Band Aid Paragraph”
+                                                               i.      Instructions – take the Band-Aid provided to you wrap the bandaid around the tip of your index finger as seen in the image on your right hand, apply the rest of your Band-Aid to your finger and then type out the following paragraph using your computer keyboard in the window below: Image result for band aid on index finger over top
+                                                             ii.      “Four score and seven years ago our fathers brought forth, upon this continent, a new nation, conceived in liberty, and dedicated to the proposition that “all men are created equal.” Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived, and so dedicated, can long endure. We are met on a great battle field of that war. We come to dedicate a portion of it, as a final resting place for those who died here, that the nation might live. This we may, in all propriety do” (Lincoln, 1863).
+g.       Impediment typing keystroke tracker part 2 titled “Tape Paragraph”
+                                                               i.      Instructions – take the tape provided to you, wrap the middle and ring finger on your left hand together and then type out the following paragraph using your computer keyboard in the window below: Image result for tape ring and middle finger image
+                                                            ii.      “But, in a larger sense, we cannot dedicate – we cannot consecrate – we cannot hallow, this ground – The brave men, living and dead, who struggled here, have hallowed it, far above our poor power to add or detract. The world will little note, nor long remember what we say here; while it can never forget what they did here. It is rather for us, the living, we here be dedicated to the great task remaining before us – that, from these honored dead we take increased devotion to that cause for which they here, gave the last full measure of devotion – that we here highly resolve these dead shall not have died in vain; that the nation, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth” (Lincoln, 1863).
+My committee also wants us to gather as much data as possible so we’ll need to capture data on:
+
+
+
+
+·         Number of times backspace is hit
+·         Number of times Tab is hit
+·         Cursor navigation keys
+·         Participant method of error correcting
+·         error correcting
+·         overlapping of keys combinations – Shift, caps lock for writing capital and small letters
+·         typing speed
+·         characteristic errors
+·         Top 25 digraphs
+1.       th
+2.       he
+3.       in
+4.       er
+5.       an
+6.       re
+7.       nd
+8.       at
+9.       on
+10.   nt
+11.   ha
+12.   es
+13.   st
+14.   en
+15.   ed
+16.   to
+17.   it
+18.   ou
+19.   ea
+20.   hi
+21.   is
+22.   or
+23.   ti
+24.   as
+25.   te
+ 
+ 
+Thanks,
+ 
+Jay Young
