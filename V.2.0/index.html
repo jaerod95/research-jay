@@ -4,11 +4,12 @@
   <title>Keystroke Gatherer Test</title>
   <!--Using Vue.js for Application-->
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <!--My pubSub for managing all different event processes-->
+  <script src="https://cdn.jsdelivr.net/pubsubjs/1.4.2/pubsub.min.js"></script>
 </head>
 
 <body>
-  <div id="app">
-    {{message}}
+  <div v-html="page_content"id="app">
   </div>
 </body>
 
