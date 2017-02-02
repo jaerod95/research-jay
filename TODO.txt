@@ -1,0 +1,5 @@
+Create Gulpfile that joins all my js files into one, then minifies it.
+Create a micro function for each section of my code so it's easier to understand and to edit
+Create 6 web pages
+Impliment vue.js? To dynamicly load the pages
+Show off to Jay.
