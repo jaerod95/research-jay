@@ -1,0 +1,23 @@
+html {
+  margin: 0px;
+  padding: 0px; }
+
+.jr_login {
+  width: 800;
+  height: 500;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -270px;
+  margin-left: -450px;
+  padding: 20px 50px;
+  background: #ccc; }
+
+.newUser {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0px auto; }
+  .newUser input {
+    height: 40px; }
