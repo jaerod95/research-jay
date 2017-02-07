@@ -21,9 +21,16 @@ gulp.task('sass', function() {
         .pipe(browserSync.reload({ stream: true }));
 });
 
+gulp.task('reload', () => {
+    browserSync.reload();
+})
+
 gulp.task('sass:watch', function() {
-    //gulp.watch('./lib/sass/**/*.scss', ['sass']);
-    gulp.watch('./**/*.html').on('change', browserSync.reload({ stream: true}));
+    gulp.watch('./lib/sass/**/*.scss', ['sass']);
 });
 
-gulp.task("default", ['browser-sync', 'sass', 'sass:watch']);
+gulp.task('watch', () => {
+    gulp.watch(['./lib/**/*.js','./gulpfile.js', './**/*.html'], ['reload']);
+});
+
+gulp.task("default", ['browser-sync', 'sass', 'sass:watch', 'watch']);
