@@ -7,24 +7,44 @@
     margin-top: -($height/2 + $padding-top) + px;
     margin-left: -($width/2 + $padding-left) + px;
     padding: $padding-top + px $padding-left + px;
-
 }
 
 html {
-  margin: 0px; padding: 0px;
+    margin: 0px;
+    padding: 0px;
+    background: darkblue;
 }
-.jr_login {
-@include center(800, 500, 20, 50);
-background: #ccc;
-}
-.newUser {
-  width: 500px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 0px auto;
 
-  input{
-      height: 40px;
-  }
+.jr_login {
+    @include center(800, 500, 40, 50);
+    background: #ccc;
+    border-radius: 10px;
+    font-size: 20px;
+    h3 {
+        margin: 5px 0px;
+    }
+    p {
+        margin: 0px;
+    }
+    .center {
+        text-align: center;
+    }
+    .center_div {
+        display: flex;
+        justify-content: center;
+    }
+    .submit {
+        width: 150px;
+    }
+    .input_block {
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 0px auto;
+        input {
+            height: 35px;
+            font-size: 25px
+        }
+    }
 }

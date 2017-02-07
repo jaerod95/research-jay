@@ -1,6 +1,7 @@
 html {
   margin: 0px;
-  padding: 0px; }
+  padding: 0px;
+  background: darkblue; }
 
 .jr_login {
   width: 800;
@@ -8,16 +9,29 @@ html {
   position: absolute;
   left: 50%;
   top: 50%;
-  margin-top: -270px;
+  margin-top: -290px;
   margin-left: -450px;
-  padding: 20px 50px;
-  background: #ccc; }
-
-.newUser {
-  width: 500px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 0px auto; }
-  .newUser input {
-    height: 40px; }
+  padding: 40px 50px;
+  background: #ccc;
+  border-radius: 10px;
+  font-size: 20px; }
+  .jr_login h3 {
+    margin: 5px 0px; }
+  .jr_login p {
+    margin: 0px; }
+  .jr_login .center {
+    text-align: center; }
+  .jr_login .center_div {
+    display: flex;
+    justify-content: center; }
+  .jr_login .submit {
+    width: 150px; }
+  .jr_login .input_block {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0px auto; }
+    .jr_login .input_block input {
+      height: 35px;
+      font-size: 25px; }
