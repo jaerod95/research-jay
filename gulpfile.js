@@ -8,8 +8,7 @@ var browserSync = require('browser-sync').create();
 gulp.task('browser-sync', function() {
     browserSync.init({
         server: {
-            baseDir: "./",
-            index: "V.2.0/index.html"
+            baseDir: "./"
         },
     });
 });
@@ -30,7 +29,7 @@ gulp.task('sass:watch', function() {
 });
 
 gulp.task('watch', () => {
-    gulp.watch(['./lib/**/*.js','./gulpfile.js', './**/*.html'], ['reload']);
+    gulp.watch(['./lib/**/*.js','./gulpfile.js', './**/*.html', './lib/**/*.css'], ['reload']);
 });
 
 gulp.task("default", ['browser-sync', 'sass', 'sass:watch', 'watch']);

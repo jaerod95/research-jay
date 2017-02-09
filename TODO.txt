@@ -25,4 +25,12 @@ password: id number;
 key gatherer adapted to each section.
 
 4 hours
-3 left
+3 left\
+
+
+
+
+
+
+
+30 minutes to clock

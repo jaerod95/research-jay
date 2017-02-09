@@ -14,8 +14,8 @@
         <div class="jr_login">
             <div class="input_block">
                 <h3 class="center">Login</h3>
-                <p>Net ID </p><input type="text" name="netID" value="">
-                <p>Student ID #</p><input type="password" name="" value="">
+                <p>Net ID </p><input type="text" name="netID" id="login-user">
+                <p>Student ID #</p><input type="password" id="login-pass">
                 <br>
                 <div class="center_div">
                     <input type="submit" class="submit" onclick="jr_key.authenticate()">
@@ -24,9 +24,9 @@
             <hr>
             <div class="input_block">
                 <h3 class="center">Create new Account</h3>
-                <p>Full Name</p><input type="text" name="full_name" value="">
-                <p>Net ID </p><input type="text" name="netID" value=""> (this will be your username)
-                <p>Student ID #</p><input type="password" name="" value=""> (This will be your password);
+                <p>Full Name</p><input type="text" name="full_name" id="create-name">
+                <p>Net ID </p><input type="text" name="netID" id="create-user"> (this will be your username)
+                <p>Student ID #</p><input type="password" id="create-pass"> (This will be your password);
                 <br>
                 <div class="center_div">
                     <input type="submit" class="submit" onclick="jr_key.createUser()">
@@ -37,7 +37,3 @@
 </body>
 
 </html>
-
-
-
-<!--<script src='keystroke.js' charset="utf-8"></script>-->
