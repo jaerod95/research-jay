@@ -15,6 +15,19 @@ html {
     background: darkblue;
 }
 
+.jr_content_page {
+    @include center(900, 900, 0, 30);
+    border-radius: 10px;
+    background: #ccc;
+    position: relative;
+    button {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        
+    }
+}
+
 .jr_login {
     @include center(800, 500, 40, 50);
     background: #ccc;

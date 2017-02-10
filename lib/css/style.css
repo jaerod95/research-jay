@@ -3,6 +3,23 @@ html {
   padding: 0px;
   background: darkblue; }
 
+.jr_content_page {
+  width: 900;
+  height: 900;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -450px;
+  margin-left: -480px;
+  padding: 0px 30px;
+  border-radius: 10px;
+  background: #ccc;
+  position: relative; }
+  .jr_content_page button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px; }
+
 .jr_login {
   width: 800;
   height: 500;
