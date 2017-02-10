@@ -1,36 +1,4 @@
-Create Gulpfile that joins all my js files into one, then minifies it.
-Create a micro function for each section of my code so it's easier to understand and to edit
-Create 6 web pages
-Impliment vue.js? To dynamicly load the pages
-Show off to Jay.
-
-
-
-
-
-
-
-
-
-
-
-
-
-Load a webpage with a login section or a create user section.
-
-Full name: Name:
-username = netID
-password: id number;
-
-key gatherer adapted to each section.
-
-4 hours
-3 left\
-
-
-
-
-
-
-
+Add real page content
+Add the input boxes specific layout
+Add disclaimer.
 30 minutes to clock

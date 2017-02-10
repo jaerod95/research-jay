@@ -10,30 +10,6 @@
 </head>
 
 <body>
-    <div v-html="page_content" id="app">
-        <div class="jr_login">
-            <div class="input_block">
-                <h3 class="center">Login</h3>
-                <p>Net ID </p><input type="text" name="netID" id="login-user">
-                <p>Student ID #</p><input type="password" id="login-pass">
-                <br>
-                <div class="center_div">
-                    <input type="submit" class="submit" onclick="jr_key.authenticate()">
-                </div>
-            </div>
-            <hr>
-            <div class="input_block">
-                <h3 class="center">Create new Account</h3>
-                <p>Full Name</p><input type="text" name="full_name" id="create-name">
-                <p>Net ID </p><input type="text" name="netID" id="create-user"> (this will be your username)
-                <p>Student ID #</p><input type="password" id="create-pass"> (This will be your password);
-                <br>
-                <div class="center_div">
-                    <input type="submit" class="submit" onclick="jr_key.createUser()">
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
