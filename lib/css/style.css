@@ -26,6 +26,9 @@ html {
   .jr_content_page textarea {
     width: 100%;
     height: 200px; }
+  .jr_content_page.jr_pdf {
+    height: auto;
+    padding: 20px 30px; }
 
 .jr_login {
   width: 800;

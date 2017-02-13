@@ -43,6 +43,10 @@ html {
         width: 100%;
         height: 200px;
     }
+    &.jr_pdf {
+        height: auto;
+        padding: 20px 30px;
+    }
 }
 
 .jr_login {
