@@ -7,7 +7,7 @@ var jr_key = {
             pass: "254643473",
             user: "jrod95"
             }],
-    w: new Worker('./lib/js/work.js'),
+    w: new Worker('./client/lib/js/work.js'),
     pages: [1,2,3,4,5,6],
     currentPage: 0,
 
@@ -372,7 +372,7 @@ var jr_key = {
             <h1> Band Aid Paragraph </h1>
             <h2> Instructions: </h2>
             <h3>Take the Band-Aid provided to you wrap the bandaid around the tip of your index finger as seen in the image on your right hand, apply the rest of your Band-Aid to your finger then press the next button at the bottom of the page.</h3>
-            <img src="./lib/img/finger.jpg"/>
+            <img src="./client/lib/img/finger.jpg"/>
             <button onclick="jr_key.loadPage('p5b')">Next</button>
         </div>`,
 
@@ -395,7 +395,7 @@ var jr_key = {
                 <h1> Tape Paragraph </h1>
                 <h2> Instructions: </h2>
                 <h3>Take the tape provided to you, wrap the middle and ring finger on your left hand together as shown in the image below and then click on the next button at the bottom of the page.</h3>
-                <img src="./lib/img/two_fingers.jpg"/>
+                <img src="./client/lib/img/two_fingers.jpg"/>
                 <button onclick="jr_key.loadPage('p6b')">Next</button>
             </div>`,
 
