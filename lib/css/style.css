@@ -3,6 +3,12 @@ html {
   padding: 0px;
   background: #002255; }
 
+h1 {
+  margin: 5px 0px;
+  color: #114477;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
+  font-size: 31px; }
+
 .jr_content_page {
   width: 600;
   height: 600;
@@ -42,11 +48,6 @@ html {
   background: #eee;
   border-radius: 10px;
   font-size: 20px; }
-  .jr_login h1 {
-    margin: 5px 0px;
-    color: #114477;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
-    font-size: 31px; }
   .jr_login p {
     margin: 0px; }
   .jr_login .center {

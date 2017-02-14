@@ -19,6 +19,13 @@ html {
     background: $main-color;
 }
 
+    h1 {
+        margin: 5px 0px;
+        color: $m-font;
+        font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
+        font-size: 31px;
+    }
+
 .jr_content_page {
     @include center(600, 600, 0, 30);
 
@@ -54,12 +61,7 @@ html {
     background: #eee;
     border-radius: 10px;
     font-size: 20px;
-    h1 {
-        margin: 5px 0px;
-        color: $m-font;
-        font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
-        font-size: 31px;
-    }
+
     p {
         margin: 0px;
     }
