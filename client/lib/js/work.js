@@ -129,6 +129,10 @@ self.addEventListener('message', function (e) {
       jr_key.recordData(e.data[1]);
       break;
 
+    case 'rating':
+      jr_key.data[jr_key.currentPage]['rating'] = e.data[1];
+      break;
+
     /**************************************************************
      * Calls the upload function to upload the data captured      *
      **************************************************************/

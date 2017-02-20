@@ -18,7 +18,7 @@ var jr_key = {
     init: function () {
         console.log('init ran');
         document.body.innerHTML = jr_key.p0;
-        jr_key.getUsers();
+        //jr_key.getUsers();
 
         jr_key.w.addEventListener('message', function (e) {
             switch(e.data[0]) {
@@ -68,7 +68,7 @@ var jr_key = {
         jr_key.users.forEach(function (element) {
             if (element.user === user && element.pass === pass) {
                 jr_key.w.postMessage(['createSession', user + '-' + Date.now(), user]);
-                jr_key.pdf(user);
+                jr_key.initStroke(user);
                 found = true;
             }
         });
@@ -81,6 +81,7 @@ var jr_key = {
      * @returns {void}                                             *
      ***************************************************************/
     createUser: function () {
+        
         console.log('createUser ran');
         var name = $("#create-name").val();
         var user = $("#create-user").val();
@@ -88,8 +89,12 @@ var jr_key = {
         if (name == "" || user == "" || pass == "") {
             alert('please fill out all the boxes');
         } else {
-            document.body.innerHTML = jr_key.p0b;
         var found = false;
+        if (jr_key.users == []) {
+            setTimeout(jr_key.createUser, 100);
+            return;
+        }
+        document.body.innerHTML = jr_key.p0b;
         jr_key.users.forEach(function (element) {
             if (element.user === user || element.pass === pass) {
                 jr_key.loginErr('create');
@@ -108,7 +113,8 @@ var jr_key = {
                 contentType: 'application/json',
                 success: function (response) {
                     console.log('upload successful');
-                    document.body.innerHTML = jr_key.p0;
+                     jr_key.w.postMessage(['createSession', user + '-' + Date.now(), user]);
+                    jr_key.pdf(user);
                 },
                 error: function (data, response, err) {
                     console.log(data);
@@ -119,8 +125,10 @@ var jr_key = {
     },
 
     pdf: function (user) {
+        document.body.setAttribute('user', user);
         document.body.innerHTML = jr_key.pForm + '<p style="display: none;" id="pdf_user">' + user + '</p>';
-
+        document.getElementById('logged_in_as').innerHTML = user;
+        
         Date.prototype.toDateInputValue = (function () {
             var local = new Date(this);
             local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
@@ -165,9 +173,20 @@ var jr_key = {
      * @returns {void}                                             *
      ***************************************************************/
     initStroke: function (user) {
+        document.body.setAttribute('user', user);
         jr_key.randomlyLoadPage();
         document.addEventListener('keydown' , jr_key.keyEvent);
         document.addEventListener('keyup'   , jr_key.keyEvent);
+    },
+
+    difficulty_data: function(e) {
+        console.log(e);
+        if (e == "") {
+            alert('Please select a difficulty level.');
+        } else {
+            jr_key.w.postMessage(['rating', e]);
+        jr_key.randomlyLoadPage();
+        }
     },
 
     /***************************************************************
@@ -209,6 +228,12 @@ var jr_key = {
 
     loadPage: function(page) {
         switch (page) {
+            case "p3b":
+            document.body.innerHTML = jr_key.p3b;
+                break;
+            case "p4b":
+            document.body.innerHTML = jr_key.p4b;
+                break;
             case "p5b":
             document.body.innerHTML = jr_key.p5b;
                 break;
@@ -225,6 +250,7 @@ var jr_key = {
             console.error('loadPage Function threw an error');
             break;
         }
+        document.getElementById('logged_in_as').innerHTML = document.body.getAttribute('user');
     },
 
     /***************************************************************
@@ -259,6 +285,7 @@ var jr_key = {
                 console.error('loadPageRandomly Function threw an error');
                     break;
             }
+            document.getElementById('logged_in_as').innerHTML = document.body.getAttribute('user');
             jr_key.w.postMessage(['newPage', jr_key.currentPage])
         }
     },
@@ -269,6 +296,7 @@ var jr_key = {
      ***************************************************************/
     finish: function() {
         document.body.innerHTML = jr_key.p7;
+        document.getElementById('logged_in_as').innerHTML = document.body.getAttribute('user');
         document.removeEventListener('keydown' , jr_key.keyEvent);
         document.removeEventListener('keyup'   , jr_key.keyEvent);
         console.log('finish ran');
@@ -303,15 +331,16 @@ var jr_key = {
 <p>This consent form will be kept by the researcher for at least three years beyond the end of the study.
 </p>
     <button id="next" onclick="jr_key.createPDF();">Next</button>
-    </div>`,
+    </div>
+    <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
     
-    p0: `    <div v-html="page_content" id="app">
+    p0: `<div v-html="page_content" id="app">
         <div class="jr_login">
             <div class="input_block">
+            <p style="text-align: justify; font-size: 14px;">If this is your first time at this portal, please create a new account.  If you have already created an account, login using your login credentials.</p>
                 <h1 class="center">Login</h1>
                 <p>Net ID </p><input type="text" name="netID" id="login-user" value="">
                 <p>Student ID #</p><input type="password" id="login-pass" value="">
-                <br>
                 <div class="center_div">
                     <input type="submit" class="submit" onclick="jr_key.authenticate()">
                 </div>
@@ -322,7 +351,6 @@ var jr_key = {
                 <p>Full Name</p><input type="text" name="full_name" id="create-name">
                 <p>Net ID </p><input type="text" name="netID" id="create-user"> (this will be your username)
                 <p>Student ID #</p><input type="password" id="create-pass"> (This will be your password);
-                <br>
                 <div class="center_div">
                     <input type="submit" class="submit" onclick="jr_key.createUser()">
                 </div>
@@ -338,35 +366,65 @@ var jr_key = {
             <h1>Helen Keller Introduction</h1>
             <h2> Instructions: </h2>
             <h3>Please type out the following paragraph using your computer keyboard in the window below:</h3>
-            <p>“It is with a kind of fear that I begin to write the history of my life.  I have, as it were, as superstitious hesitation in lifting the veil that clings about my childhood like a golden mist. The task of writing an autobiography is a difficult one.  When I try to classify my earliest impressions, I find that fact and fancy look alike across the years that link the past with the present.  The woman paints the child’s experiences in her own fantasy.  A few impressions stand out vividly from the first years of my life; but “the shadows of the prison-house are on the rest.” Besides, many of the joys and sorrows of childhood have lost their poignancy; and many incidents of vital importance in my early education have been forgotten in the excitement of great discoveries.  In order, therefore, not to be tedious I shall try to present in a series of sketches only the episodes that seem to me to be the most interesting and important. (Keller, 1904, p. 3)”</p>
+            <p>"It is with a kind of fear that I begin to write the history of my life.  I have, as it were, as superstitious hesitation in lifting the veil that clings about my childhood like a golden mist. The task of writing an autobiography is a difficult one.  When I try to classify my earliest impressions, I find that fact and fancy look alike across the years that link the past with the present.  The woman paints the child's experiences in her own fantasy.  A few impressions stand out vividly from the first years of my life; but "the shadows of the prison-house are on the rest." Besides, many of the joys and sorrows of childhood have lost their poignancy; and many incidents of vital importance in my early education have been forgotten in the excitement of great discoveries.  In order, therefore, not to be tedious I shall try to present in a series of sketches only the episodes that seem to me to be the most interesting and important. (Keller, 1904, p. 3)"</p>
             <textarea id="p1_textarea" class="textarea"></textarea>
             <button onclick="jr_key.randomlyLoadPage()">Next</button>
-        </div>`,
+        </div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
     p2: `<div class="jr_content_page">
             <h1>Helen Keller Conclusion</h1>
             <h2> Instructions: </h2>
             <h3>Please type out the following paragraph using your computer keyboard in the window below:</h3>
-            <p>“Often when I dream, thoughts pass through my mind like cowled shadows, silent and remote, and disappear.  Perhaps they are the ghosts of thoughts that once inhabited the mind of an ancestor.  At other times, the things I have learned and the things I have been taught, drop away, as the lizard sheds its skin, and I see my soul as God sees it.  There are also rare and beautiful moments when I see and hear in Dreamland.  What if in my waking hours a sound should ring through the silent halls of hearing? What if a ray of light should flash through the darkened chambers of my soul? What would happen, I ask many and many a time.  Would the bow-and-string tension of life snap?  Would the heart, overweighted with sudden joy, stop beating for very  excess of happiness? (Keller, 1904, p. 431)”</p>
+            <p>"Often when I dream, thoughts pass through my mind like cowled shadows, silent and remote, and disappear.  Perhaps they are the ghosts of thoughts that once inhabited the mind of an ancestor.  At other times, the things I have learned and the things I have been taught, drop away, as the lizard sheds its skin, and I see my soul as God sees it.  There are also rare and beautiful moments when I see and hear in Dreamland.  What if in my waking hours a sound should ring through the silent halls of hearing? What if a ray of light should flash through the darkened chambers of my soul? What would happen, I ask many and many a time.  Would the bow-and-string tension of life snap?  Would the heart, overweighted with sudden joy, stop beating for very  excess of happiness? (Keller, 1904, p. 431)"</p>
             <textarea id="p1_textarea" class="textarea"></textarea>
             <button onclick="jr_key.randomlyLoadPage()">Next</button>
-        </div>`,
+        </div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
     p3: `<div class="jr_content_page">
             <h1> Creativity Quiz </h1>
             <h2> Instructions: </h2>
-            <h3>There are over 100 alternative ways to use paper clips from their intended useage, how many you can get?  Type your ideas out in the window below as you come up with the ideas.</h3>
+            <h3>There are over 100 alternative creative ways to use paper clips from their intended usage.  How many creative ideas for the use of a paperclip can you come up with on your own without any help from outside resources?  Please type your ideas out in the space provided below.</h3>
             <textarea id="p3_textarea" class="textarea"></textarea>
-            <button onclick="jr_key.randomlyLoadPage()">Next</button>
-        </div>`,
+            <button onclick="jr_key.loadPage('p3b')">Next</button>
+        </div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
+
+    p3b: `<div class="jr_content_page">
+        <form>
+        <p>On a scale from one to five, how difficult was the previous activity?
+        <input type="radio" name="difficult" value="1">1 (very easy)
+        <input type="radio" name="difficult" value="2">2
+        <input type="radio" name="difficult" value="3">3
+        <input type="radio" name="difficult" value="4">4
+        <input type="radio" name="difficult" value="5">5 (very hard)
+    </form>
+    <button onclick="jr_key.difficulty_data(document.querySelector('form').elements.difficult.value)">Next</button>
+    </div>
+    <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
     p4: `<div class="jr_content_page">
             <h1> Deep Thought Short Essay </h1>
             <h2> Instructions: </h2>
-            <h3> In at least 200 words, Type out your own answer to the question including examples, “what is intelligence?”  Type your answer out in the space below. </h3>
+            <h3> In at least 150 words, type out your own answer to the question, "what is intelligence?" Please include specific examples in your answer. Provide your answer in the space below. </h3>
             <textarea id="p4_textarea" class="textarea"></textarea>
-            <button onclick="jr_key.randomlyLoadPage()">Next</button>
-        </div>`,
+            <button onclick="jr_key.loadPage('p4b')">Next</button>
+        </div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
+
+    p4b: `<div class="jr_content_page">
+        <form action="jr_key.difficulty_data">
+        <p>On a scale from one to five, how difficult was the previous activity?
+        <input type="radio" name="difficult" value="1">1 (very easy)
+        <input type="radio" name="difficult" value="2">2
+        <input type="radio" name="difficult" value="3">3
+        <input type="radio" name="difficult" value="4">4
+        <input type="radio" name="difficult" value="5">5 (very hard)
+    </form>
+    <button onclick="jr_key.difficulty_data(document.querySelector('form').elements.difficult.value)">Next</button>
+    </div>
+    <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
     p5: `<div class="jr_content_page">
             <h1> Band Aid Paragraph </h1>
@@ -374,22 +432,25 @@ var jr_key = {
             <h3>Take the Band-Aid provided to you wrap the bandaid around the tip of your index finger as seen in the image on your right hand, apply the rest of your Band-Aid to your finger then press the next button at the bottom of the page.</h3>
             <img src="./client/lib/img/finger.jpg"/>
             <button onclick="jr_key.loadPage('p5b')">Next</button>
-        </div>`,
+        </div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
     p5b: `<div class="jr_content_page">
             <h1> Band Aid Paragraph </h1>
             <h2> Instructions: </h2>
             <h3>With the Band Aid on your finger, please type out the following paragraph using your computer keyboard in the window below:</h3>
-            <p>“Four score and seven years ago our fathers brought forth, upon this continent, a new nation, conceived in liberty, and dedicated to the proposition that “all men are created equal.” Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived, and so dedicated, can long endure. We are met on a great battle field of that war. We come to dedicate a portion of it, as a final resting place for those who died here, that the nation might live. This we may, in all propriety do (Lincoln, 1863)”</p>
+            <p>"Four score and seven years ago our fathers brought forth, upon this continent, a new nation, conceived in liberty, and dedicated to the proposition that "all men are created equal." Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived, and so dedicated, can long endure. We are met on a great battle field of that war. We come to dedicate a portion of it, as a final resting place for those who died here, that the nation might live. This we may, in all propriety do (Lincoln, 1863)"</p>
             <textarea id="p5_textarea" class="textarea"></textarea>
             <button onclick="jr_key.loadPage('p6c')">Next</button>
-        </div>`,
+        </div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
                 p6c: `<div class="jr_content_page">
                 <h1> Band Aid Paragraph Paragraph </h1>
                 <h3>Remove the bandaid from your finger then press the next button on the bottom of the box.</h3>
         <button onclick="jr_key.randomlyLoadPage()">Next</button>
-            </div>`,
+            </div>
+            <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
         p6: `<div class="jr_content_page">
                 <h1> Tape Paragraph </h1>
@@ -397,25 +458,30 @@ var jr_key = {
                 <h3>Take the tape provided to you, wrap the middle and ring finger on your left hand together as shown in the image below and then click on the next button at the bottom of the page.</h3>
                 <img src="./client/lib/img/two_fingers.jpg"/>
                 <button onclick="jr_key.loadPage('p6b')">Next</button>
-            </div>`,
+            </div>
+            <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
         p6b: `<div class="jr_content_page">
                 <h1> Tape Paragraph </h1>
                 <h2> Instructions: </h2>
                 <h3>With your fingers wrapped, please type out the following paragraph using your computer keyboard in the window below:</h3>
-                <p>“But, in a larger sense, we cannot dedicate – we cannot consecrate – we cannot hallow, this ground – The brave men, living and dead, who struggled here, have hallowed it, far above our poor power to add or detract. The world will little note, nor long remember what we say here; while it can never forget what they did here. It is rather for us, the living, we here be dedicated to the great task remaining before us – that, from these honored dead we take increased devotion to that cause for which they here, gave the last full measure of devotion – that we here highly resolve these dead shall not have died in vain; that the nation, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth (Lincoln, 1863)”</p>
+                <p>"But, in a larger sense, we cannot dedicate - we cannot consecrate - we cannot hallow, this ground - The brave men, living and dead, who struggled here, have hallowed it, far above our poor power to add or detract. The world will little note, nor long remember what we say here; while it can never forget what they did here. It is rather for us, the living, we here be dedicated to the great task remaining before us - that, from these honored dead we take increased devotion to that cause for which they here, gave the last full measure of devotion - that we here highly resolve these dead shall not have died in vain; that the nation, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth (Lincoln, 1863)"</p>
                 <textarea id="p6_textarea" class="textarea"></textarea>
                 <button onclick="jr_key.loadPage('p6c')">Next</button>
-            </div>`,
+            </div>
+            <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
         
         p6c: `<div class="jr_content_page">
                 <h1> Tape Paragraph </h1>
                 <h3>Remove the tape from your fingers then press the next button on the bottom of the box.</h3>
         <button onclick="jr_key.randomlyLoadPage()">Next</button>
-            </div>`,
+            </div>
+            <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
-        p7: `<div class="jr_content_page"><h1>Ulploading your answers (this might take a while).</h1></div>`,
+        p7: `<div class="jr_content_page"><h1>Uploading your answers (this might take a while).</h1></div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`,
 
-        p7b: `<div class="jr_content_page"><h1>Thank you for Participating in this survey.</h1></div>`
+        p7b: `<div class="jr_content_page"><h1>Thank you for Participating in this survey.</h1></div>
+        <div class="jr_logged_in"><p>Logged in as: <span id="logged_in_as"></span></p></div>`
 }
 document.addEventListener('DOMContentLoaded', jr_key.init)
